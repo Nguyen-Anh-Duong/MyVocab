@@ -1,10 +1,9 @@
 import express from 'express'
 import compression from 'compression'
 import cors from 'cors'
-import 'dotenv/config'
+import { connectDB } from './database/database.connect.js'
 
 const app = express()
-const port = process.env.PORT || '3000'
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -16,11 +15,12 @@ app.use(
 )
 // app.use(cors())
 
+//connect to database
+connectDB()
+
 app.get('/', (req, res) => {
   res.send('Hello World!')
   console.log('Response sent')
 })
 
-app.listen(port, () => {
-  console.log(`MyVocab listening on port ${port}`)
-})
+export default app
