@@ -1,1 +1,1 @@
-test
+var x = test
