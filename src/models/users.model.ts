@@ -1,24 +1,37 @@
-import mongoose, { Schema, Document } from 'mongoose'
+import { Model, Schema, model } from 'mongoose'
+import { IUser } from '~/interfaces/models/users.interface.js'
 
-const userSchema: Schema = new mongoose.Schema({
-  username: String,
-  email: {
-    type: String,
-    required: true
+const UserSchema: Schema<IUser> = new Schema(
+  {
+    username: {
+      type: String,
+      required: true
+    },
+    email: {
+      type: String,
+      required: true
+    },
+    passwordHash: {
+      type: String,
+      required: true
+    },
+    role: {
+      type: String,
+      enum: ['admin', 'user'],
+      required: true
+    },
+    status: {
+      type: String,
+      enum: ['active', 'pending', 'suspended', 'deactivated'],
+      required: true
+    },
+    suspensionReason: String
   },
-  passwordHash: String,
-  role: {
-    type: String,
-    enum: ['admin', 'user'],
-    required: true
-  },
-  createAt: Date,
-  status: {
-    type: String,
-    enum: ['active', 'pending', 'suspended', 'deactivated']
+  {
+    timestamps: true
   }
-})
+)
 
-const User = mongoose.model('User', userSchema)
+const UserModel: Model<IUser> = model<IUser>('User', UserSchema)
 
-export default User
+export default UserModel
