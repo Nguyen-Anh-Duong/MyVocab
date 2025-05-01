@@ -1,7 +1,11 @@
 import express from 'express'
 import compression from 'compression'
 import cors from 'cors'
+import 'reflect-metadata'
 import { connectDB } from './database/database.connect.js'
+import router from './routes/index.js'
+import morgan from 'morgan'
+import helmet from 'helmet'
 
 const app = express()
 
@@ -13,14 +17,13 @@ app.use(
     threshold: 100 * 1000
   })
 )
-// app.use(cors())
+app.use(cors())
+app.use(morgan('dev'))
+app.use(helmet())
 
 //connect to database
 connectDB()
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-  console.log('Response sent')
-})
+app.use(router)
 
 export default app

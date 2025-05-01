@@ -1,7 +1,8 @@
-import { NextFunction, Router, Response, Request } from 'express'
+import { Router } from 'express'
+import apiRouter from './api/index.js'
 
 const router = Router()
 
-router.get('/user', (req: Request, res: Response, next: NextFunction) => {
-  res.json({ x: 'ok' })
-})
+router.use('/', apiRouter)
+
+export default router

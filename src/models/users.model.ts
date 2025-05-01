@@ -1,5 +1,4 @@
-import { Model, Schema, model } from 'mongoose'
-import { IUser } from '~/interfaces/models/users.interface.js'
+import { Model, Schema, model, Document } from 'mongoose'
 
 const UserSchema: Schema<IUser> = new Schema(
   {
@@ -18,11 +17,13 @@ const UserSchema: Schema<IUser> = new Schema(
     role: {
       type: String,
       enum: ['admin', 'user'],
+      default: 'user',
       required: true
     },
     status: {
       type: String,
       enum: ['active', 'pending', 'suspended', 'deactivated'],
+      default: 'pending',
       required: true
     },
     suspensionReason: String
@@ -32,6 +33,6 @@ const UserSchema: Schema<IUser> = new Schema(
   }
 )
 
-const UserModel: Model<IUser> = model<IUser>('User', UserSchema)
+const UserModel = model<IUser>('User', UserSchema)
 
 export default UserModel
