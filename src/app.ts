@@ -6,6 +6,7 @@ import { connectDB } from './database/database.connect.js'
 import router from './routes/index.js'
 import morgan from 'morgan'
 import helmet from 'helmet'
+import { errorHandler } from './middlewares/errorHandler.js'
 
 const app = express()
 
@@ -25,5 +26,6 @@ app.use(helmet())
 connectDB()
 
 app.use(router)
+app.use(errorHandler)
 
 export default app

@@ -1,8 +1,6 @@
 import app from './app.js'
-import 'dotenv/config'
+import { MONGO_DB_NAME, PORT } from './config/index.js'
 
-const port = process.env.PORT || '3000'
-
-app.listen(port, () => {
-  console.log(`MyVocab listening on port ${port}`)
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`)
 })

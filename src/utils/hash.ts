@@ -1,26 +1,38 @@
 import { randomBytes, scrypt } from 'node:crypto'
-import { UnExpectedError } from './Errors.js'
+import { KEY_LENGTH, SALT_LENGTH } from '~/config/index.js'
 
-const generateSalt = (length: number): Promise<string> => {
+const generateSalt = (length: number): Promise<Buffer> => {
   return new Promise((resolve, reject) => {
     randomBytes(length, (err, buf) => {
       if (err) {
-        reject(new UnExpectedError(err.message))
+        reject(err)
       } else {
-        resolve(buf.toString('hex'))
+        resolve(buf)
       }
     })
   })
 }
 
-export const hashPassword = async (password: string): Promise<string> => {
-  const salt = await generateSalt(16)
+export const hashPassword = async (password: string): Promise<Buffer> => {
+  const salt = await generateSalt(SALT_LENGTH)
   return new Promise((resolve, reject) => {
-    scrypt(password, salt, 64, (err, derivedKey) => {
+    scrypt(password, salt, KEY_LENGTH, (err, derivedKey) => {
       if (err) {
-        return reject(new UnExpectedError(err.message))
+        return reject(err)
       }
-      resolve(`${salt}${derivedKey.toString('hex')}`)
+      resolve(Buffer.concat([salt, derivedKey]))
     })
   })
+}
+
+export const comparePassword = async (password: string, passwordHash: Buffer): Promise<boolean> => {
+  const salt = passwordHash.subarray(0, SALT_LENGTH)
+  const storedHash = passwordHash.subarray(SALT_LENGTH)
+  const derivedKey = await new Promise<Buffer>((resolve, reject) => {
+    scrypt(password, salt, KEY_LENGTH, (err, derivedKey) => {
+      if (err) reject(err)
+      else resolve(derivedKey as Buffer)
+    })
+  })
+  return Buffer.compare(derivedKey, storedHash) === 0
 }

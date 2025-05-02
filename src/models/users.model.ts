@@ -1,4 +1,4 @@
-import { Model, Schema, model, Document } from 'mongoose'
+import { Schema, model } from 'mongoose'
 
 const UserSchema: Schema<IUser> = new Schema(
   {
@@ -11,7 +11,7 @@ const UserSchema: Schema<IUser> = new Schema(
       required: true
     },
     passwordHash: {
-      type: String,
+      type: Buffer,
       required: true
     },
     role: {

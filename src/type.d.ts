@@ -3,6 +3,10 @@ import * as Mongoose from 'mongoose'
 declare global {
   type UserRole = 'admin' | 'user'
   type UserStatus = 'active' | 'pending' | 'suspended' | 'deactivated'
+  type CustomErrorContent = {
+    message: string
+    context?: { [key: string]: any }
+  }
   namespace Express {
     interface Request {
       user?: UserPayload
@@ -13,7 +17,7 @@ declare global {
     _id: string
     username: string
     email: string
-    passwordHash: string
+    passwordHash: Buffer
     role: UserRole
     status: UserStatus
     suspensionReason?: string
