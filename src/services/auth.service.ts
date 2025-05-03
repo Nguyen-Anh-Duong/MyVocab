@@ -3,6 +3,7 @@ import UserModel from '~/models/users.model.js'
 import BadRequestError, { CustomError } from '~/utils/Errors.js'
 import { comparePassword, hashPassword } from '~/utils/hash.js'
 import { toUserResponse } from '~/utils/user.utils.js'
+import { generateAccessToken } from './tokens.service.js'
 
 class AuthService {
   register = async (userData: CreateUserDto): Promise<IUserResponse> => {
@@ -30,7 +31,8 @@ class AuthService {
     if (!compare) {
       throw new BadRequestError({ message: 'Invalid Password.' })
     }
-    return 'ok'
+    const token = generateAccessToken(user)
+    return token
   }
 }
 

@@ -7,6 +7,7 @@ import router from './routes/index.js'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import { errorHandler } from './middlewares/errorHandler.js'
+import { connectRedis } from './database/redis.connect.js'
 
 const app = express()
 
@@ -24,6 +25,11 @@ app.use(helmet())
 
 //connect to database
 connectDB()
+connectRedis().then(() => console.log('Connect redis'))
+
+app.get('/', (req, res, next) => {
+  res.send('hello')
+})
 
 app.use(router)
 app.use(errorHandler)
