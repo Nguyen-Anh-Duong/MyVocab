@@ -1,9 +1,9 @@
 import { CreateUserDto, LoginUserDto } from '~/dtos/users.dto.js'
 import UserModel from '~/models/users.model.js'
-import BadRequestError, { CustomError } from '~/utils/Errors.js'
+import { BadRequestError } from '~/utils/Errors.js'
 import { comparePassword, hashPassword } from '~/utils/hash.js'
 import { toUserResponse } from '~/utils/user.utils.js'
-import { generateAccessToken } from './tokens.service.js'
+import { generateAccessToken, generateRefreshToken } from './tokens.service.js'
 
 class AuthService {
   register = async (userData: CreateUserDto): Promise<IUserResponse> => {
@@ -17,8 +17,8 @@ class AuthService {
 
     //hash password
     const passwordHash = await hashPassword(password)
-    const createUser: IUser = await UserModel.create({ email, username, passwordHash })
-    return toUserResponse(createUser)
+    const user: IUser = await UserModel.create({ email, username, passwordHash })
+    return toUserResponse(user)
   }
 
   login = async (userData: LoginUserDto) => {
@@ -31,8 +31,12 @@ class AuthService {
     if (!compare) {
       throw new BadRequestError({ message: 'Invalid Password.' })
     }
-    const token = generateAccessToken(user)
-    return token
+    const accessToken = await generateAccessToken(user)
+    const refreshToken = await generateRefreshToken(user)
+    return {
+      account: toUserResponse(user),
+      token: { accessToken, refreshToken }
+    }
   }
 }
 

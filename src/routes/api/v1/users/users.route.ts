@@ -1,5 +1,10 @@
 import { NextFunction, Request, Response, Router } from 'express'
+import { authenticateAccessToken } from '~/middlewares/authentication.js'
 
-const router = Router()
+const userRouter = Router()
 
-router.get('/users', (req: Request, res: Response, next: NextFunction) => {})
+userRouter.get('/users', authenticateAccessToken, (req: Request, res: Response, next: NextFunction) => {
+  res.send('okffff')
+})
+
+export default userRouter

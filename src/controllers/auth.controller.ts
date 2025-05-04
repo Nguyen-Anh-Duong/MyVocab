@@ -8,13 +8,13 @@ class AuthController {
   register = async (req: Request, res: Response, next: NextFunction) => {
     const userData = req.body
     const user: IUserResponse = await this.authService.register(userData)
-    res.status(201).json({ data: user, message: 'Register user.' })
+    res.status(201).json({ message: 'Register user.', data: user })
   }
 
   login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userData = req.body
-    const user = await this.authService.login(userData)
-    res.status(200).json(user)
+    const data = await this.authService.login(userData)
+    res.status(200).json({ message: 'Login success.', data })
   })
 }
 

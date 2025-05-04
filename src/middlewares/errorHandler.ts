@@ -22,7 +22,8 @@ export const errorHandler: ErrorRequestHandler = (err: Error, req: Request, res:
     return
   }
   // Unhandled errors
-  console.error(JSON.stringify(err, null, 2))
+  // console.error(JSON.stringify(err, null, 2))
+  console.error(err)
   res.status(500).json({ errors: [{ message: 'Something went wrong' }] })
   return
 }

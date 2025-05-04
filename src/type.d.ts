@@ -1,4 +1,5 @@
 import * as Mongoose from 'mongoose'
+import { JwtPayload } from 'jsonwebtoken'
 
 declare global {
   type UserRole = 'admin' | 'user'
@@ -9,7 +10,7 @@ declare global {
   }
   namespace Express {
     interface Request {
-      user?: UserPayload
+      user?: IUserRequest
     }
   }
 
@@ -34,11 +35,13 @@ declare global {
     suspensionReason?: string
   }
 
-  //payload use in jwt
-  interface UserPayload {
-    email: string
-    username: string
-    role: UserRole
+  interface CustomErrorContent {
+    message: string
+    context?: { [key: string]: any }
+  }
+
+  interface IUserRequest extends JwtPayload {
     userId: string
+    role: UserRole
   }
 }
