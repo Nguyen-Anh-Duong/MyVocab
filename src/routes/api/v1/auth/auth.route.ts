@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import AuthController from '~/controllers/auth.controller.js'
-import { CreateUserDto, LoginUserDto } from '~/dtos/users.dto.js'
+import { CreateUserDto, LoginUserDto } from '~/dtos/user.dto.js'
 import { validateDto } from '~/middlewares/validate.js'
 
 const authRouter = Router()

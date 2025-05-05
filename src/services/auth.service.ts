@@ -1,9 +1,9 @@
-import { CreateUserDto, LoginUserDto } from '~/dtos/users.dto.js'
-import UserModel from '~/models/users.model.js'
+import { CreateUserDto, LoginUserDto } from '~/dtos/user.dto.js'
+import UserModel from '~/models/user.model.js'
 import { BadRequestError } from '~/utils/Errors.js'
 import { comparePassword, hashPassword } from '~/utils/hash.js'
 import { toUserResponse } from '~/utils/user.utils.js'
-import { generateAccessToken, generateRefreshToken } from './tokens.service.js'
+import { generateAccessToken, generateRefreshToken } from './token.service.js'
 
 class AuthService {
   register = async (userData: CreateUserDto): Promise<IUserResponse> => {

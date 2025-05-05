@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { verifyAccessToken } from '~/services/tokens.service.js'
+import { verifyAccessToken } from '~/services/token.service.js'
 import { UnauthorizedError } from '~/utils/Errors.js'
 
 export const authenticateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
