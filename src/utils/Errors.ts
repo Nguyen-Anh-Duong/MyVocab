@@ -104,7 +104,7 @@ export class ValidationError extends CustomError {
   constructor(params?: { code?: number; message?: string; logging?: boolean; context?: { [key: string]: any } }) {
     const { code, message, logging } = params || {}
 
-    super(message || 'Bad request')
+    super(message || 'Validate error.')
     this._code = code || ValidationError.statusCode
     this._logging = logging || false
     this._context = params?.context || {}
