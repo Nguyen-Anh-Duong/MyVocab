@@ -43,8 +43,7 @@ const vocabularySchema = new Schema(
     word: {
       type: String,
       required: true,
-      trim: true,
-      unique: true
+      trim: true
     },
     phonetic: {
       text: String,
@@ -56,10 +55,12 @@ const vocabularySchema = new Schema(
       ref: 'User',
       required: true
     },
-    category: {
-      type: Types.ObjectId,
-      ref: 'Category'
-    }
+    categories: [
+      {
+        type: Types.ObjectId,
+        ref: 'Category'
+      }
+    ]
   },
   {
     timestamps: true

@@ -20,7 +20,7 @@ class CommonPhrasesDto {
   meaning!: string
 }
 
-class MeaningDto {
+export class MeaningDto {
   @IsString()
   meaning!: string
 
@@ -65,6 +65,7 @@ export class CreateVocabularyDto {
   meanings!: MeaningDto[]
 
   @IsOptional()
-  @IsString()
-  category?: string
+  @IsArray()
+  @IsString({ each: true })
+  categories?: string[]
 }

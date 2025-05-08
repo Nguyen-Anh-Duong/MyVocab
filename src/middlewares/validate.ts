@@ -13,6 +13,7 @@ export const validateDto = (dtoClass: any, source: 'body' | 'query' | 'params' =
         fields: errors.map((err) => err.property),
         details: message
       }
+      console.log(errors)
       return next(
         new ValidationError({
           message: 'Invalid data',
