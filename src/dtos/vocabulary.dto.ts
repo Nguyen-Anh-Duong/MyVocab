@@ -69,3 +69,26 @@ export class CreateVocabularyDto {
   @IsString({ each: true })
   categories?: string[]
 }
+
+export class UpdateVocabularyDto {
+  @IsOptional()
+  @IsString()
+  word?: string
+
+  @IsOptional()
+  phonetic?: {
+    text?: string
+    audio?: string
+  }
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => MeaningDto)
+  @IsOptional()
+  meanings?: MeaningDto[]
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  categories?: string[]
+}
