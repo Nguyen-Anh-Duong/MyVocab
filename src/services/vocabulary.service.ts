@@ -35,10 +35,10 @@ class VocabularyService {
     return newVocab
   }
 
-  // getAllVocabByUserId = async (userId: string) => {
-  //   const vocabList = await VocabularyModel.find({ createdBy: userId })
-
-  // }
+  getAllVocabulary = async (userId: string) => {
+    const vocabList = await VocabularyModel.find({ createdBy: userId }).lean()
+    return vocabList
+  }
 
   getOneVocabulary = async (vocabId: string, userId: string) => {
     const vocab = await VocabularyModel.findOne({ _id: vocabId, createdBy: userId })
@@ -99,6 +99,13 @@ class VocabularyService {
 
     await vocab.save()
     return vocab
+  }
+
+  deleteOneVocabulary = async (vocabId: string, userId: string) => {
+    const vocab = await VocabularyModel.findOneAndDelete({ _id: vocabId, createdBy: userId }).lean()
+    if (!vocab) {
+      throw new NotFoundError({ message: 'Vocabulary not found' })
+    }
   }
 }
 

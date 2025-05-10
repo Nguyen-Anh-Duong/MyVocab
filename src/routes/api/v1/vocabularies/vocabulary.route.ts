@@ -21,5 +21,12 @@ vocabRouter.patch(
   authenticateAccessToken,
   vocabularyController.updateOneVocabulary
 )
+vocabRouter.delete(
+  '/:vocabId',
+  validateDto(IdDto, 'params'),
+  authenticateAccessToken,
+  vocabularyController.deleteOneVocabulary
+)
+vocabRouter.get('/', authenticateAccessToken, vocabularyController.getAllVocabulary)
 
 export default vocabRouter
