@@ -22,7 +22,7 @@ export const validateDto = (dtoClass: any, source: 'body' | 'query' | 'params' =
         })
       )
     }
-    req[source] = instance
+    //req[source] = instance
     next()
   }
 }

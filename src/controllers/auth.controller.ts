@@ -7,8 +7,14 @@ class AuthController {
 
   register = async (req: Request, res: Response, next: NextFunction) => {
     const userData = req.body
-    const user: IUserResponse = await this.authService.register(userData)
-    res.status(201).json({ message: 'Register user.', data: user })
+    await this.authService.register(userData)
+    res.status(201).json({ message: 'Register successfully. Please verify your email.' })
+  }
+
+  verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+    const { token } = req.query
+    const data = await this.authService.verifyEmail(token as string)
+    res.status(200).json({ message: 'Verify email success.', data })
   }
 
   login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {

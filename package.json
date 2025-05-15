@@ -8,8 +8,8 @@
     "dev": "npx nodemon",
     "build": "rimraf ./dist && tsc && tsc-alias",
     "start": "node dist/server.js",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . --config eslint.config.js",
+    "lint:fix": "eslint . --fix --config eslint.config.js",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write ."
   },
@@ -35,7 +35,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2",
     "redis": "^5.0.0",
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "resend": "^4.5.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.24.0",

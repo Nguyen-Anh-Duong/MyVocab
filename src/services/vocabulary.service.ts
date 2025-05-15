@@ -93,8 +93,8 @@ class VocabularyService {
       //all categories belong to user now. Replace this with old categories field
       const allCategoryIds = [...existingCategoryIds, ...newCategoryDocs.map((doc) => doc._id)]
 
-      //replaced
-      vocab.categories = allCategoryIds as unknown as typeof vocab.categories
+      //replaced the categories field with new category ids
+      vocab.set('categories', allCategoryIds)
     }
 
     await vocab.save()

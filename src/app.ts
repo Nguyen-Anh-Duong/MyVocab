@@ -8,6 +8,7 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import { errorHandler } from './middlewares/errorHandler.js'
 import { connectRedis } from './database/redis.connect.js'
+import { NODE_ENV } from './config/index.js'
 
 const app = express()
 
@@ -20,8 +21,10 @@ app.use(
   })
 )
 app.use(cors())
-app.use(morgan('dev'))
 app.use(helmet())
+if (NODE_ENV === 'dev') {
+  app.use(morgan('dev'))
+}
 
 //connect to database
 connectDB()

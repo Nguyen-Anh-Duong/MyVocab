@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "noImplicitAny": false, // Không báo lỗi khi không có type
     "module": "NodeNext", // Quy định output module được sử dụng
     "moduleResolution": "NodeNext",
     "target": "ES2023", // Target output cho code
