@@ -17,9 +17,9 @@ class VocabularyController {
     res.status(200).json({ message: 'Get one vocabulary successfully', data })
   }
 
-  getAllVocabulary = async (req: Request, res: Response, next: NextFunction) => {
+  getVocabularies = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as IUserRequest
-    const data = await vocabularyService.getAllVocabulary(user.userId)
+    const data = await vocabularyService.getVocabularies(user.userId)
     res.status(200).json({ message: 'Get all vocabulary successfully', data })
   }
 

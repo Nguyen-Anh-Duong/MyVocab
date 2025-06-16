@@ -14,9 +14,9 @@ class AuthService {
 
     //check whether email exist or not
     const existingUser = await UserModel.findOne({ email })
-    // if (existingUser) {
-    //   throw new BadRequestError({ message: 'User have already existed.' })
-    // }
+    if (existingUser) {
+      throw new BadRequestError({ message: 'User have already existed.' })
+    }
 
     //hash password
     const passwordHash = await hashPassword(password)

@@ -35,7 +35,7 @@ class VocabularyService {
     return newVocab
   }
 
-  getAllVocabulary = async (userId: string) => {
+  getVocabularies = async (userId: string) => {
     const vocabList = await VocabularyModel.find({ createdBy: userId }).lean()
     return vocabList
   }

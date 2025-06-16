@@ -27,6 +27,6 @@ vocabRouter.delete(
   authenticateAccessToken,
   vocabularyController.deleteOneVocabulary
 )
-vocabRouter.get('/', authenticateAccessToken, vocabularyController.getAllVocabulary)
+vocabRouter.get('/', authenticateAccessToken, vocabularyController.getVocabularies)
 
 export default vocabRouter
