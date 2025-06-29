@@ -4,7 +4,12 @@ import { toUserResponse } from '~/utils/user.utils.js'
 class UserService {
   getUserInfo = async (userId: string) => {
     const user = await UserModel.findById(userId).lean()
-    return user
+
+    if (!user) {
+      throw new Error('User not found')
+    }
+
+    return toUserResponse(user)
   }
 }
 
