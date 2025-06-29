@@ -9,6 +9,6 @@ const authController = new AuthController()
 
 authRouter.post('/register', validateDto(CreateUserDto), authController.register)
 authRouter.post('/login', validateDto(LoginUserDto), authController.login)
-authRouter.post('/verify-email', validateDto(VerifyEmailDto, 'query'), authController.verifyEmail)
+authRouter.get('/verify-email', validateDto(VerifyEmailDto, 'query'), authController.verifyEmail)
 
 export default authRouter

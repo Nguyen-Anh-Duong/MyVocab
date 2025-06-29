@@ -5,7 +5,7 @@ class UserController {
   me = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user
     const data = await userService.getUserInfo(user!.userId)
-    res.status(200).json(data)
+    res.status(200).json({ message: 'Get user info successfully.', data })
   }
 }
 

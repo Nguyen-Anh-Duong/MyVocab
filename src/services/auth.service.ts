@@ -45,7 +45,8 @@ class AuthService {
     if (!verifyToken) {
       throw new BadRequestError({ message: 'Invalid token.' })
     }
-    if (verifyToken.createdAt.getTime() < Date.now() - 24 * 60 * 60 * 1000) {
+    // Check if the token is expired (1 hour)
+    if (verifyToken.createdAt.getTime() < Date.now() - 1 * 60 * 60 * 1000) {
       throw new BadRequestError({ message: 'Token expired.' })
     }
 

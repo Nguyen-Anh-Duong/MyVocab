@@ -1,5 +1,6 @@
 export const toUserResponse = (user: IUser): IUserResponse => {
   const { _id, email, username, role, status } = user
+  console.log('ok')
   return { userId: _id.toString(), email, username, role, status }
 }
 
