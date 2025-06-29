@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { CreateVocabularyDto } from '~/dtos/vocabulary.dto.js'
+import { SearchVocabularyDto } from '~/dtos/search.dto.js'
 import vocabularyService from '~/services/vocabulary.service.js'
 
 class VocabularyController {
@@ -36,6 +37,16 @@ class VocabularyController {
     const { vocabId } = req.params
     await vocabularyService.deleteOneVocabulary(vocabId, user.userId)
     res.status(200).json({ message: 'Delete vocabulary successfully' })
+  }
+
+  searchVocabularies = async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user as IUserRequest
+    const searchParams = req.query as unknown as SearchVocabularyDto
+    const result = await vocabularyService.searchVocabularies(searchParams, user.userId)
+    res.status(200).json({
+      message: 'Search vocabularies successfully',
+      ...result
+    })
   }
 }
 

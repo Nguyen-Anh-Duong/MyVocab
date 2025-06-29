@@ -1,5 +1,6 @@
 import { Types } from 'mongoose'
 import { CreateVocabularyDto } from '~/dtos/vocabulary.dto.js'
+import { SearchVocabularyDto } from '~/dtos/search.dto.js'
 import { CategoryModel } from '~/models/category.model.js'
 import { VocabularyModel } from '~/models/vocabulary.model.js'
 import { NotFoundError } from '~/utils/Errors.js'
@@ -105,6 +106,96 @@ class VocabularyService {
     const vocab = await VocabularyModel.findOneAndDelete({ _id: vocabId, createdBy: userId }).lean()
     if (!vocab) {
       throw new NotFoundError({ message: 'Vocabulary not found' })
+    }
+  }
+
+  searchVocabularies = async (searchParams: SearchVocabularyDto, userId: string) => {
+    const {
+      keyword,
+      meaning,
+      example,
+      phrase,
+      partOfSpeech,
+      category,
+      context,
+      sortBy = 'createdAt',
+      sortOrder = 'desc',
+      page = '1',
+      limit = '10'
+    } = searchParams
+
+    // Build query
+    const query: any = { createdBy: userId }
+
+    // Keyword search (search in word field)
+    if (keyword) {
+      query.word = { $regex: keyword, $options: 'i' }
+    }
+
+    // Search in meanings array
+    if (meaning || example || phrase || partOfSpeech || context) {
+      query.meanings = {
+        $elemMatch: {
+          ...(meaning && { meaning: { $regex: meaning, $options: 'i' } }),
+          ...(context && { context: { $regex: context, $options: 'i' } }),
+          ...(partOfSpeech && { partOfSpeech }),
+          ...(example && {
+            examples: {
+              $elemMatch: {
+                $or: [
+                  { sentence: { $regex: example, $options: 'i' } },
+                  { translation: { $regex: example, $options: 'i' } }
+                ]
+              }
+            }
+          }),
+          ...(phrase && {
+            commonPhrases: {
+              $elemMatch: {
+                $or: [{ phrase: { $regex: phrase, $options: 'i' } }, { meaning: { $regex: phrase, $options: 'i' } }]
+              }
+            }
+          })
+        }
+      }
+    }
+
+    // Search by category
+    if (category) {
+      const categoryDoc = await CategoryModel.findOne({
+        name: { $regex: category, $options: 'i' },
+        createdBy: userId
+      })
+      if (categoryDoc) {
+        query.categories = categoryDoc._id
+      }
+    }
+
+    // Calculate pagination
+    const skip = (parseInt(page) - 1) * parseInt(limit)
+
+    // Execute query with pagination and sorting
+    const [vocabularies, total] = await Promise.all([
+      VocabularyModel.find(query)
+        .populate({
+          path: 'categories',
+          select: 'name _id'
+        })
+        .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 })
+        .skip(skip)
+        .limit(parseInt(limit))
+        .lean(),
+      VocabularyModel.countDocuments(query)
+    ])
+
+    return {
+      data: vocabularies,
+      pagination: {
+        total,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPages: Math.ceil(total / parseInt(limit))
+      }
     }
   }
 }
