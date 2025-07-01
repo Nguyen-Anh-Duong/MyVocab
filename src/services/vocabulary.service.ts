@@ -1,5 +1,6 @@
 import { Types } from 'mongoose'
 import { CreateVocabularyDto } from '~/dtos/vocabulary.dto.js'
+import { SearchVocabularyDto } from '~/dtos/search.dto.js'
 import { CategoryModel } from '~/models/category.model.js'
 import { VocabularyModel } from '~/models/vocabulary.model.js'
 import { NotFoundError } from '~/utils/Errors.js'
@@ -107,6 +108,16 @@ class VocabularyService {
       throw new NotFoundError({ message: 'Vocabulary not found' })
     }
   }
-}
 
+  searchVocabularies = async (word: string, userId: string) => {
+    const vocabularies = await VocabularyModel.find({
+      createdBy: userId,
+      $text: { $search: word }
+    })
+      .sort({ score: { $meta: 'textScore' } })
+      .lean()
+
+    return vocabularies
+  }
+}
 export default new VocabularyService()

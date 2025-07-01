@@ -2,10 +2,18 @@ import { Router } from 'express'
 import vocabularyController from '~/controllers/vocabulary.controller.js'
 import { IdDto } from '~/dtos/id.dto.js'
 import { CreateVocabularyDto, UpdateVocabularyDto } from '~/dtos/vocabulary.dto.js'
+import { SearchVocabularyDto } from '~/dtos/search.dto.js'
 import { authenticateAccessToken } from '~/middlewares/authentication.js'
 import { validateDto } from '~/middlewares/validate.js'
 
 const vocabRouter = Router()
+
+vocabRouter.get(
+  '/search',
+  validateDto(SearchVocabularyDto, 'query'),
+  authenticateAccessToken,
+  vocabularyController.searchVocabularies
+)
 
 vocabRouter.post('/', validateDto(CreateVocabularyDto), authenticateAccessToken, vocabularyController.createNewVocab)
 vocabRouter.get(

@@ -67,6 +67,18 @@ const vocabularySchema = new Schema(
   }
 )
 
+vocabularySchema.index(
+  { word: 'text', 'meanings.examples.sentence': 'text', 'meanings.commonPhrases.phrase': 'text' },
+  {
+    weights: {
+      word: 10,
+      'meanings.examples.sentence': 5,
+      'meanings.commonPhrases.phrase': 3
+    },
+    name: 'vocabulary_text_search_index'
+  }
+)
+
 export const VocabularyModel = model('Vocabulary', vocabularySchema)
 
 /* 
