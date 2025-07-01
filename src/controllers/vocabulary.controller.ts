@@ -41,11 +41,11 @@ class VocabularyController {
 
   searchVocabularies = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as IUserRequest
-    const searchParams = req.query as unknown as SearchVocabularyDto
-    const result = await vocabularyService.searchVocabularies(searchParams, user.userId)
+    const { word } = req.query as unknown as SearchVocabularyDto
+    const result = await vocabularyService.searchVocabularies(word, user.userId)
     res.status(200).json({
       message: 'Search vocabularies successfully',
-      ...result
+      data: result
     })
   }
 }

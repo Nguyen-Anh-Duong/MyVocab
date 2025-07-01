@@ -8,6 +8,13 @@ import { validateDto } from '~/middlewares/validate.js'
 
 const vocabRouter = Router()
 
+vocabRouter.get(
+  '/search',
+  validateDto(SearchVocabularyDto, 'query'),
+  authenticateAccessToken,
+  vocabularyController.searchVocabularies
+)
+
 vocabRouter.post('/', validateDto(CreateVocabularyDto), authenticateAccessToken, vocabularyController.createNewVocab)
 vocabRouter.get(
   '/:vocabId',
@@ -29,11 +36,5 @@ vocabRouter.delete(
   vocabularyController.deleteOneVocabulary
 )
 vocabRouter.get('/', authenticateAccessToken, vocabularyController.getVocabularies)
-vocabRouter.get(
-  '/search',
-  validateDto(SearchVocabularyDto, 'query'),
-  authenticateAccessToken,
-  vocabularyController.searchVocabularies
-)
 
 export default vocabRouter

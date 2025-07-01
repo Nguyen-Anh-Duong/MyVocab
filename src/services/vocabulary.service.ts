@@ -109,95 +109,15 @@ class VocabularyService {
     }
   }
 
-  searchVocabularies = async (searchParams: SearchVocabularyDto, userId: string) => {
-    const {
-      keyword,
-      meaning,
-      example,
-      phrase,
-      partOfSpeech,
-      category,
-      context,
-      sortBy = 'createdAt',
-      sortOrder = 'desc',
-      page = '1',
-      limit = '10'
-    } = searchParams
+  searchVocabularies = async (word: string, userId: string) => {
+    const vocabularies = await VocabularyModel.find({
+      createdBy: userId,
+      $text: { $search: word }
+    })
+      .sort({ score: { $meta: 'textScore' } })
+      .lean()
 
-    // Build query
-    const query: any = { createdBy: userId }
-
-    // Keyword search (search in word field)
-    if (keyword) {
-      query.word = { $regex: keyword, $options: 'i' }
-    }
-
-    // Search in meanings array
-    if (meaning || example || phrase || partOfSpeech || context) {
-      query.meanings = {
-        $elemMatch: {
-          ...(meaning && { meaning: { $regex: meaning, $options: 'i' } }),
-          ...(context && { context: { $regex: context, $options: 'i' } }),
-          ...(partOfSpeech && { partOfSpeech }),
-          ...(example && {
-            examples: {
-              $elemMatch: {
-                $or: [
-                  { sentence: { $regex: example, $options: 'i' } },
-                  { translation: { $regex: example, $options: 'i' } }
-                ]
-              }
-            }
-          }),
-          ...(phrase && {
-            commonPhrases: {
-              $elemMatch: {
-                $or: [{ phrase: { $regex: phrase, $options: 'i' } }, { meaning: { $regex: phrase, $options: 'i' } }]
-              }
-            }
-          })
-        }
-      }
-    }
-
-    // Search by category
-    if (category) {
-      const categoryDoc = await CategoryModel.findOne({
-        name: { $regex: category, $options: 'i' },
-        createdBy: userId
-      })
-      if (categoryDoc) {
-        query.categories = categoryDoc._id
-      }
-    }
-
-    // Calculate pagination
-    const skip = (parseInt(page) - 1) * parseInt(limit)
-
-    // Execute query with pagination and sorting
-    const [vocabularies, total] = await Promise.all([
-      VocabularyModel.find(query)
-        .populate({
-          path: 'categories',
-          select: 'name _id'
-        })
-        .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 })
-        .skip(skip)
-        .limit(parseInt(limit))
-        .lean(),
-      VocabularyModel.countDocuments(query)
-    ])
-
-    return {
-      data: vocabularies,
-      pagination: {
-        total,
-        page: parseInt(page),
-        limit: parseInt(limit),
-        totalPages: Math.ceil(total / parseInt(limit))
-      }
-    }
+    return vocabularies
   }
 }
-
 export default new VocabularyService()
