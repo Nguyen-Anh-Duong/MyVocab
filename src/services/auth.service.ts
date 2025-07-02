@@ -102,6 +102,20 @@ class AuthService {
 
     return { token: { accessToken, refreshToken: encoded as string, familyToken: familyId } }
   }
+
+  logout = async (familyId: string, userId: string) => {
+    //delete refresh token from redis
+    const key = `refresh:${userId}:${familyId}`
+    await redis.del(key)
+  }
+
+  logoutAllDevice = async (userId: string) => {
+    //delete all refresh tokens from redis
+    const keys = await redis.keys(`refresh:${userId}:*`)
+    if (keys.length > 0) {
+      await redis.del(keys)
+    }
+  }
 }
 
 export default AuthService

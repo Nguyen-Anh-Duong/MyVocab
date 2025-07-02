@@ -8,7 +8,7 @@ export const generateAccessToken = (user: IUser): Promise<string> => {
     role: user.role
   }
   return new Promise((resolve, reject) => {
-    jwt.sign(payload, ACCESS_TOKEN_SECRET_KEY, { expiresIn: '15m' }, (err, encoded) => {
+    jwt.sign(payload, ACCESS_TOKEN_SECRET_KEY, { expiresIn: '1m' }, (err, encoded) => {
       if (err) reject(err)
       else resolve(encoded as string)
     })
