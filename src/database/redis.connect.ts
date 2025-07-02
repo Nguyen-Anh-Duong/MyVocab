@@ -1,7 +1,16 @@
 import { createClient } from 'redis'
+import { REDIS_URL } from '~/config/index.js'
 
-export const connectRedis = async () => {
-  await createClient()
-    .on('error', (err) => console.log('Redid client error', err))
-    .connect()
-}
+const redisUrl = REDIS_URL
+
+const redis = createClient({
+  url: redisUrl
+})
+redis.on('error', (err) => console.log('Redis client error', err))
+
+// ;(async () => {
+//   await redis.connect()
+// })()
+await redis.connect().then(() => console.log('Connected to Redis'))
+
+export default redis

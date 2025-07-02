@@ -7,6 +7,8 @@ import { generateAccessToken, generateRefreshToken } from './token.service.js'
 import verifyTokenModel from '~/models/verifyToken.model.js'
 import { sendEmail } from '~/utils/email.js'
 import { APP_URL } from '~/config/index.js'
+import redis from '~/database/redis.connect.js'
+import { token } from 'morgan'
 
 class AuthService {
   register = async (userData: CreateUserDto): Promise<void> => {
@@ -74,11 +76,31 @@ class AuthService {
       throw new BadRequestError({ message: 'Invalid Password.' })
     }
     const accessToken = await generateAccessToken(user)
-    const refreshToken = await generateRefreshToken(user)
+    const { encoded, tokenId } = await generateRefreshToken(user)
+
+    //save refresh token to redis
+    const key = `refresh:${user._id}:${tokenId}`
+    await redis.set(key, tokenId, { EX: 60 * 60 * 24 }) // 1 day expiration
+
     return {
       account: toUserResponse(user),
-      token: { accessToken, refreshToken }
+      token: { accessToken, refreshToken: encoded, familyToken: tokenId }
     }
+  }
+
+  refreshAccessToken = async (familyId: string, userId: string) => {
+    const user = await UserModel.findById(userId)
+    if (!user) {
+      throw new BadRequestError({ message: 'User not exist.' })
+    }
+    const accessToken = await generateAccessToken(user)
+    const { encoded, tokenId } = await generateRefreshToken(user)
+
+    //save refresh token to redis
+    const key = `refresh:${userId}:${familyId}`
+    await redis.set(key, tokenId as string, { EX: 60 * 60 * 24 }) // 1 day expiration
+
+    return { token: { accessToken, refreshToken: encoded as string, familyToken: familyId } }
   }
 }
 

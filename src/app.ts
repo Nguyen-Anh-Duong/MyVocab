@@ -2,12 +2,11 @@ import express from 'express'
 import compression from 'compression'
 import cors from 'cors'
 import 'reflect-metadata'
-import { connectDB } from './database/database.connect.js'
 import router from './routes/index.js'
 import morgan from 'morgan'
 import helmet from 'helmet'
+import cookieParser from 'cookie-parser'
 import { errorHandler } from './middlewares/errorHandler.js'
-import { connectRedis } from './database/redis.connect.js'
 import { NODE_ENV } from './config/index.js'
 
 const app = express()
@@ -25,10 +24,11 @@ app.use(helmet())
 if (NODE_ENV === 'dev') {
   app.use(morgan('dev'))
 }
+app.use(cookieParser())
 
 //connect to database
-connectDB()
-connectRedis().then(() => console.log('Connect redis'))
+import('./database/database.connect.js')
+import('~/database/redis.connect.js')
 
 app.get('/', (req, res, next) => {
   res.send('hello')
