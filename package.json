@@ -26,6 +26,8 @@
   "homepage": "https://github.com/Nguyen-Anh-Duong/MyVocab#readme",
   "dependencies": {
     "@types/cookie-parser": "^1.4.9",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "compression": "^1.8.0",
@@ -38,7 +40,9 @@
     "mongoose": "^8.13.2",
     "redis": "^5.0.0",
     "reflect-metadata": "^0.2.2",
-    "resend": "^4.5.1"
+    "resend": "^4.5.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.24.0",

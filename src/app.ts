@@ -8,6 +8,7 @@ import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import { errorHandler } from './middlewares/errorHandler.js'
 import { NODE_ENV } from './config/index.js'
+import { specs, swaggerUi } from './config/swagger.js'
 
 const app = express()
 
@@ -42,8 +43,22 @@ app.use(cookieParser())
 import('./database/database.connect.js')
 import('~/database/redis.connect.js')
 
+// Swagger Documentation
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(specs, {
+    explorer: true,
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'MyVocab API Documentation',
+    swaggerOptions: {
+      persistAuthorization: true
+    }
+  })
+)
+
 app.get('/', (req, res, next) => {
-  res.send('hello')
+  res.send('MyVocab API Server - Visit /api-docs for API documentation')
 })
 
 app.use(router)

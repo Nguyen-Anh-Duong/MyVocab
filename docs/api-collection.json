@@ -1,0 +1,484 @@
+{
+  "info": {
+    "name": "MyVocab API",
+    "description": "API collection for MyVocab - Vocabulary Learning Application",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.data.token.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-email?token=verification-token-here",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "verify-email"],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "verification-token-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh-token"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            }
+          }
+        },
+        {
+          "name": "Logout All Devices",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout-all",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout-all"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"]
+            }
+          }
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Business English\",\n  \"description\": \"Business and professional vocabulary\",\n  \"color\": \"#3498db\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"]
+            }
+          }
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Category Name\",\n  \"description\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/categories/:categoryId",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", ":categoryId"],
+              "variable": [
+                {
+                  "key": "categoryId",
+                  "value": "category-id-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categories/:categoryId",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", ":categoryId"],
+              "variable": [
+                {
+                  "key": "categoryId",
+                  "value": "category-id-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Category Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categories/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Get Vocabularies by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categories/:categoryId/vocabularies",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", ":categoryId", "vocabularies"],
+              "variable": [
+                {
+                  "key": "categoryId",
+                  "value": "category-id-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categories/search?q=business&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "business"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vocabularies",
+      "item": [
+        {
+          "name": "Get All Vocabularies",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vocabularies",
+              "host": ["{{baseUrl}}"],
+              "path": ["vocabularies"]
+            }
+          }
+        },
+        {
+          "name": "Create Vocabulary",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"word\": \"extraordinary\",\n  \"phonetic\": {\n    \"text\": \"/ɪkˈstrɔːrdɪneri/\",\n    \"audio\": \"https://example.com/audio/extraordinary.mp3\"\n  },\n  \"meanings\": [\n    {\n      \"meaning\": \"Very unusual or remarkable\",\n      \"context\": \"Used to emphasize the extent of something\",\n      \"partOfSpeech\": \"adjective\",\n      \"note\": \"Often used for positive emphasis\",\n      \"examples\": [\n        {\n          \"sentence\": \"She has extraordinary talent.\",\n          \"translation\": \"Cô ấy có tài năng phi thường.\"\n        }\n      ],\n      \"commonPhrases\": [\n        {\n          \"phrase\": \"extraordinary circumstances\",\n          \"meaning\": \"unusual or exceptional situations\"\n        }\n      ]\n    }\n  ],\n  \"categories\": [\"Advanced English\", \"Adjectives\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/vocabularies",
+              "host": ["{{baseUrl}}"],
+              "path": ["vocabularies"]
+            }
+          }
+        },
+        {
+          "name": "Get Vocabulary by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vocabularies/:vocabId",
+              "host": ["{{baseUrl}}"],
+              "path": ["vocabularies", ":vocabId"],
+              "variable": [
+                {
+                  "key": "vocabId",
+                  "value": "vocabulary-id-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Vocabulary",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"word\": \"updated word\",\n  \"meanings\": [\n    {\n      \"meaning\": \"Updated meaning\",\n      \"partOfSpeech\": \"noun\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/vocabularies/:vocabId",
+              "host": ["{{baseUrl}}"],
+              "path": ["vocabularies", ":vocabId"],
+              "variable": [
+                {
+                  "key": "vocabId",
+                  "value": "vocabulary-id-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Vocabulary",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vocabularies/:vocabId",
+              "host": ["{{baseUrl}}"],
+              "path": ["vocabularies", ":vocabId"],
+              "variable": [
+                {
+                  "key": "vocabId",
+                  "value": "vocabulary-id-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Vocabularies",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vocabularies/search?word=extraordinary",
+              "host": ["{{baseUrl}}"],
+              "path": ["vocabularies", "search"],
+              "query": [
+                {
+                  "key": "word",
+                  "value": "extraordinary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
