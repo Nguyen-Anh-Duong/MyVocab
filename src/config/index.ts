@@ -18,6 +18,8 @@ const REFRESH_TOKEN_SECRET_KEY = process.env.REFRESH_TOKEN_SECRET_KEY!
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY!
 
+const REDIS_URL = process.env.REDIS_URL!
+
 export {
   PORT,
   NODE_ENV,
@@ -30,5 +32,6 @@ export {
   ACCESS_TOKEN_SECRET_KEY,
   REFRESH_TOKEN_SECRET_KEY,
   RESEND_API_KEY,
-  APP_URL
+  APP_URL,
+  REDIS_URL
 }

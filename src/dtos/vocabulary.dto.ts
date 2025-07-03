@@ -17,7 +17,7 @@ class CommonPhrasesDto {
 
   @IsString()
   @IsOptional()
-  meaning!: string
+  meaning?: string
 }
 
 export class MeaningDto {

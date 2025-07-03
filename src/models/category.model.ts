@@ -7,6 +7,14 @@ const CategorySchema = new Schema(
       required: true,
       trim: true
     },
+    description: {
+      type: String,
+      trim: true
+    },
+    color: {
+      type: String,
+      default: '#000000' // Default color if not provided
+    },
     createdBy: {
       type: Types.ObjectId,
       ref: 'User',
