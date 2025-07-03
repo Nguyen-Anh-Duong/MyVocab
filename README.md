@@ -7,6 +7,7 @@ A comprehensive vocabulary learning application backend built with Node.js, Expr
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
+- [Quick Setup](#quick-setup)
 - [Installation](#installation)
 - [Environment Variables](#environment-variables)
 - [Running the Application](#running-the-application)
@@ -74,6 +75,10 @@ Before running this application, make sure you have the following installed:
 - MongoDB (v5.0 or higher)
 - Redis (v6.0 or higher)
 
+## ⚡ Quick Setup
+
+For a quick start, see our detailed setup guide: **[docs/SETUP.md](docs/SETUP.md)**
+
 ## 🚀 Installation
 
 1. **Clone the repository**
@@ -109,30 +114,32 @@ Before running this application, make sure you have the following installed:
 
 ## 🔧 Environment Variables
 
-Create a `.env` file in the root directory with the following variables:
+We provide a comprehensive `.env.example` file with all necessary environment variables.
+
+### Required Variables
 
 ```env
-# Server Configuration
-NODE_ENV=dev
-PORT=3000
-
-# Database
-MONGO_URI=mongodb://localhost:27017/myvocab
-MONGO_DB_NAME=myvocab
-
-# Redis
-REDIS_URL=redis://localhost:6379
-
-# JWT Secrets
+# JWT Secrets (MUST CHANGE in production)
 ACCESS_TOKEN_SECRET_KEY=your-super-secret-access-token-key
 REFRESH_TOKEN_SECRET_KEY=your-super-secret-refresh-token-key
 
-# Email Configuration (Resend)
+# Email Service
 RESEND_API_KEY=your-resend-api-key
 
-# Application URL
-APP_URL=http://localhost:3000
+# Database
+MONGO_URI=mongodb://localhost:27017/myvocab
+REDIS_URL=redis://localhost:6379
 ```
+
+### Full Configuration
+
+For a complete list of all available environment variables, see [`.env.example`](.env.example).
+
+**Important Notes:**
+
+- Always change JWT secrets in production
+- Get a free Resend API key from [resend.com](https://resend.com)
+- Never commit your actual `.env` file to version control
 
 ## 🏃‍♂️ Running the Application
 
@@ -180,6 +187,12 @@ The API uses Bearer token authentication. Include the access token in the Author
 ```
 Authorization: Bearer <your-access-token>
 ```
+
+### Testing the API
+
+1. **Swagger UI** (Recommended): http://localhost:3000/api-docs
+2. **Postman Collection**: Import `docs/api-collection.json`
+3. **cURL Examples**: See [docs/SETUP.md](docs/SETUP.md)
 
 ### Main Endpoints
 
