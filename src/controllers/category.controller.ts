@@ -56,6 +56,13 @@ class CategoryController {
     const data = await categoryService.getCategoryStats(user.userId)
     res.status(200).json({ message: 'Get category statistics successfully', data })
   }
+
+  searchCategories = async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user as IUserRequest
+    const { q } = req.query
+    const data = await categoryService.searchCategories(q as string, user.userId)
+    res.status(200).json({ message: 'Search categories successfully', data })
+  }
 }
 
 export default new CategoryController()

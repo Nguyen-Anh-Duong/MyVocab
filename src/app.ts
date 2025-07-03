@@ -19,7 +19,19 @@ app.use(
     threshold: 100 * 1000
   })
 )
-app.use(cors())
+if (NODE_ENV === 'dev') {
+  app.use(
+    cors({
+      origin: [
+        'http://localhost:5173', // Vite default dev server port
+        'http://localhost:5174' // Alternative Vite port
+      ],
+      credentials: true, // Allow cookies to be sent
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization']
+    })
+  )
+}
 app.use(helmet())
 if (NODE_ENV === 'dev') {
   app.use(morgan('dev'))

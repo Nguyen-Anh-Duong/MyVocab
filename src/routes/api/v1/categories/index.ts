@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import categoryController from '~/controllers/category.controller.js'
-import { CreateCategoryDto, UpdateCategoryDto } from '~/dtos/category.dto.js'
+import { CreateCategoryDto, SearchCategoryDto, UpdateCategoryDto } from '~/dtos/category.dto.js'
 import { CategoryIdDto, IdDto } from '~/dtos/id.dto.js'
 import { authenticateAccessToken } from '~/middlewares/authentication.js'
 import { validateDto } from '~/middlewares/validate.js'
@@ -37,6 +37,13 @@ categoryRouter.get(
   validateDto(CategoryIdDto, 'params'),
   authenticateAccessToken,
   categoryController.getVocabulariesByCategory
+)
+
+categoryRouter.get(
+  '/search',
+  validateDto(SearchCategoryDto, 'query'),
+  authenticateAccessToken,
+  categoryController.searchCategories
 )
 
 export default categoryRouter

@@ -6,7 +6,7 @@ import { BadRequestError, NotFoundError } from '~/utils/Errors.js'
 
 class CategoryService {
   createCategory = async (categoryData: CreateCategoryDto, userId: string) => {
-    const { name, description } = categoryData
+    const { name, description, color } = categoryData
 
     // Check if category with same name already exists for this user
     const existingCategory = await CategoryModel.findOne({
@@ -21,6 +21,7 @@ class CategoryService {
     const newCategory = new CategoryModel({
       name,
       description,
+      color,
       createdBy: userId
     })
 
@@ -79,6 +80,7 @@ class CategoryService {
     // Update fields
     if (updateData.name !== undefined) category.name = updateData.name
     if (updateData.description !== undefined) category.description = updateData.description
+    if (updateData.color !== undefined) category.color = updateData.color
 
     await category.save()
     return category
@@ -161,6 +163,36 @@ class CategoryService {
     )
 
     return stats
+  }
+
+  searchCategories = async (query: string, userId: string, page = 1, limit = 10) => {
+    const skip = (page - 1) * limit
+
+    const regex = new RegExp(query, 'i')
+
+    const [categories, total] = await Promise.all([
+      CategoryModel.find({
+        createdBy: userId,
+        name: { $regex: regex }
+      })
+        // .skip(skip)
+        // .limit(limit)
+        .lean(),
+      CategoryModel.countDocuments({
+        createdBy: userId,
+        name: { $regex: regex }
+      })
+    ])
+
+    return {
+      categories
+      // pagination: {
+      //   total,
+      //   page,
+      //   limit,
+      //   totalPages: Math.ceil(total / limit)
+      // }
+    }
   }
 }
 
