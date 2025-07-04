@@ -12,7 +12,7 @@ class CategoryController {
 
   getCategories = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as IUserRequest
-    const data = await categoryService.getCategories(user.userId)
+    const data = await categoryService.getCategories(user)
     res.status(200).json({ message: 'Get categories successfully', data })
   }
 
@@ -27,14 +27,14 @@ class CategoryController {
     const user = req.user as IUserRequest
     const { categoryId } = req.params
     const updateData: UpdateCategoryDto = req.body
-    const data = await categoryService.updateCategory(categoryId, updateData, user.userId)
+    const data = await categoryService.updateCategory(categoryId, updateData, user)
     res.status(200).json({ message: 'Update category successfully', data })
   }
 
   deleteCategory = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as IUserRequest
     const { categoryId } = req.params
-    await categoryService.deleteCategory(categoryId, user.userId)
+    await categoryService.deleteCategory(categoryId, user)
     res.status(200).json({ message: 'Delete category successfully' })
   }
 
@@ -44,7 +44,7 @@ class CategoryController {
     const { page = '1', limit = '10' } = req.query
     const data = await categoryService.getVocabulariesByCategory(
       categoryId,
-      user.userId,
+      user,
       parseInt(page as string),
       parseInt(limit as string)
     )
@@ -60,7 +60,7 @@ class CategoryController {
   searchCategories = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as IUserRequest
     const { q } = req.query
-    const data = await categoryService.searchCategories(q as string, user.userId)
+    const data = await categoryService.searchCategories(q as string, user)
     res.status(200).json({ message: 'Search categories successfully', data })
   }
 }

@@ -1,6 +1,6 @@
 import { IsMongoId } from 'class-validator'
 
-export class IdDto {
+export class VocabIdDto {
   @IsMongoId({ message: 'Invalid vocabulary ID.' })
   vocabId!: string
 }

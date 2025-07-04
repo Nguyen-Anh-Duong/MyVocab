@@ -10,6 +10,9 @@ import { errorHandler } from './middlewares/errorHandler.js'
 import { NODE_ENV } from './config/index.js'
 import { specs, swaggerUi } from './config/swagger.js'
 
+// Import swagger documentation files to ensure they are loaded
+import './docs/swagger/index.ts'
+
 const app = express()
 
 app.use(express.json())

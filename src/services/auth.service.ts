@@ -71,6 +71,9 @@ class AuthService {
     if (!user) {
       throw new BadRequestError({ message: 'User not exist.' })
     }
+    if (user.status !== 'active') {
+      throw new BadRequestError({ message: 'User not active. Please verify your email.' })
+    }
     const compare = await comparePassword(password, user.passwordHash)
     if (!compare) {
       throw new BadRequestError({ message: 'Invalid Password.' })

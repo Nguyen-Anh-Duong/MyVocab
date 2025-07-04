@@ -14,13 +14,13 @@ class VocabularyController {
   getOneVocabulary = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as IUserRequest
     const { vocabId } = req.params
-    const data = await vocabularyService.getOneVocabulary(vocabId, user.userId)
+    const data = await vocabularyService.getOneVocabulary(vocabId, user)
     res.status(200).json({ message: 'Get one vocabulary successfully', data })
   }
 
   getVocabularies = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as IUserRequest
-    const data = await vocabularyService.getVocabularies(user.userId)
+    const data = await vocabularyService.getVocabularies(user)
     res.status(200).json({ message: 'Get all vocabulary successfully', data })
   }
 
@@ -28,21 +28,21 @@ class VocabularyController {
     const user = req.user as IUserRequest
     const { vocabId } = req.params
     const dataUpdate = req.body
-    const data = await vocabularyService.updateOneVocabulary(dataUpdate, user.userId, vocabId)
+    const data = await vocabularyService.updateOneVocabulary(dataUpdate, user, vocabId)
     res.status(200).json({ message: 'Update vocabulary successfully', data })
   }
 
   deleteOneVocabulary = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as IUserRequest
     const { vocabId } = req.params
-    await vocabularyService.deleteOneVocabulary(vocabId, user.userId)
+    await vocabularyService.deleteOneVocabulary(vocabId, user)
     res.status(200).json({ message: 'Delete vocabulary successfully' })
   }
 
   searchVocabularies = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as IUserRequest
     const { word } = req.query as unknown as SearchVocabularyDto
-    const result = await vocabularyService.searchVocabularies(word, user.userId)
+    const result = await vocabularyService.searchVocabularies(word, user)
     res.status(200).json({
       message: 'Search vocabularies successfully',
       data: result

@@ -3,7 +3,8 @@ import { CreateVocabularyDto } from '~/dtos/vocabulary.dto.js'
 import { SearchVocabularyDto } from '~/dtos/search.dto.js'
 import { CategoryModel } from '~/models/category.model.js'
 import { VocabularyModel } from '~/models/vocabulary.model.js'
-import { NotFoundError } from '~/utils/Errors.js'
+import { ForbiddenError, NotFoundError } from '~/utils/Errors.js'
+import { Role } from '~/config/role.js'
 
 class VocabularyService {
   createVocabulary = async (vocabData: CreateVocabularyDto, userId: string) => {
@@ -36,34 +37,50 @@ class VocabularyService {
     return newVocab
   }
 
-  getVocabularies = async (userId: string) => {
-    const vocabList = await VocabularyModel.find({ createdBy: userId }).lean()
+  getVocabularies = async (user: IUserRequest) => {
+    let queryFilter: Record<string, any> = {}
+    if (user.role === Role.USER) {
+      queryFilter.createdBy = user.userId // only get vocabularies created by the user
+    }
+    const vocabList = await VocabularyModel.find(queryFilter).sort({ createdAt: -1 }).lean()
     return vocabList
   }
 
-  getOneVocabulary = async (vocabId: string, userId: string) => {
-    const vocab = await VocabularyModel.findOne({ _id: vocabId, createdBy: userId })
+  getOneVocabulary = async (vocabId: string, user: IUserRequest) => {
+    const vocab = await VocabularyModel.findById(vocabId)
       .populate({
         path: 'categories',
-        select: 'name _id' // only take name and id
+        select: 'name _id'
       })
       .lean()
+      .exec()
 
     if (!vocab) {
       throw new NotFoundError({ message: 'Not found vocabulary.' })
+    }
+    // if user is admin, they can access all vocabularies
+    if (user.role === Role.USER && vocab.createdBy!.toString() !== user.userId) {
+      throw new ForbiddenError({ message: 'Not permission.' }) // user can only access vocabularies created by them
     }
 
     return vocab
   }
 
-  updateOneVocabulary = async (data: CreateVocabularyDto, userId: string, vocabId: string) => {
-    const vocab = await VocabularyModel.findOne({
-      _id: vocabId,
-      createdBy: userId
-    })
+  updateOneVocabulary = async (data: CreateVocabularyDto, user: IUserRequest, vocabId: string) => {
+    let query: Record<string, any> = { _id: vocabId }
+    if (user.role === Role.USER) {
+      query.createdBy = user.userId // only get vocabularies created by the user
+    }
+
+    const vocab = await VocabularyModel.findById(vocabId)
 
     if (!vocab) {
       throw new NotFoundError({ message: 'Vocabulary not found' })
+    }
+
+    // if user is admin, they can access all vocabularies
+    if (user.role === Role.USER && vocab.createdBy!.toString() !== user.userId) {
+      throw new ForbiddenError({ message: 'Not permission' }) // user can only access vocabularies created by them
     }
 
     //update field
@@ -75,7 +92,7 @@ class VocabularyService {
       // first we find exiting category from request
       const existingCategories = await CategoryModel.find({
         name: { $in: data.categories },
-        createdBy: userId
+        createdBy: vocab.createdBy
       })
 
       const existingCategoryNames = existingCategories.map((c) => c.name)
@@ -87,7 +104,7 @@ class VocabularyService {
       const newCategoryDocs = await CategoryModel.insertMany(
         newCategoryNames.map((name) => ({
           name,
-          createdBy: new Types.ObjectId(userId)
+          createdBy: vocab.createdBy // ensure the category is created by owner of the vocabulary
         }))
       )
 
@@ -102,18 +119,26 @@ class VocabularyService {
     return vocab
   }
 
-  deleteOneVocabulary = async (vocabId: string, userId: string) => {
-    const vocab = await VocabularyModel.findOneAndDelete({ _id: vocabId, createdBy: userId }).lean()
+  deleteOneVocabulary = async (vocabId: string, user: IUserRequest) => {
+    const vocab = await VocabularyModel.findById(vocabId)
     if (!vocab) {
       throw new NotFoundError({ message: 'Vocabulary not found' })
     }
+
+    // if user is admin, they can delete all vocabularies
+    if (user.role === Role.USER && vocab.createdBy!.toString() !== user.userId) {
+      throw new ForbiddenError({ message: 'Not permission' }) // user can only delete vocabularies created by them
+    }
+    // delete vocabulary
+    await vocab.deleteOne()
   }
 
-  searchVocabularies = async (word: string, userId: string) => {
-    const vocabularies = await VocabularyModel.find({
-      createdBy: userId,
-      $text: { $search: word }
-    })
+  searchVocabularies = async (word: string, user: IUserRequest) => {
+    let query: Record<string, any> = { $text: { $search: word } }
+    if (user.role === Role.USER) {
+      query.createdBy = user.userId
+    }
+    const vocabularies = await VocabularyModel.find(query)
       .sort({ score: { $meta: 'textScore' } })
       .lean()
 

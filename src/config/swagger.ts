@@ -241,12 +241,14 @@ const options = {
             },
             username: {
               type: 'string',
+              minLength: 3,
+              maxLength: 30,
               description: 'Username'
             },
             password: {
               type: 'string',
               minLength: 6,
-              description: 'User password'
+              description: 'Password'
             }
           }
         },
@@ -261,7 +263,7 @@ const options = {
             },
             password: {
               type: 'string',
-              description: 'User password'
+              description: 'Password'
             }
           }
         },
@@ -307,16 +309,78 @@ const options = {
             },
             meanings: {
               type: 'array',
+              minItems: 1,
               items: {
-                $ref: '#/components/schemas/Meaning'
+                type: 'object',
+                required: ['meaning'],
+                properties: {
+                  meaning: {
+                    type: 'string',
+                    description: 'Definition of the word'
+                  },
+                  context: {
+                    type: 'string',
+                    description: 'Context where this meaning is used'
+                  },
+                  partOfSpeech: {
+                    type: 'string',
+                    enum: [
+                      'noun',
+                      'verb',
+                      'adjective',
+                      'adverb',
+                      'pronoun',
+                      'preposition',
+                      'conjunction',
+                      'interjection'
+                    ],
+                    description: 'Part of speech'
+                  },
+                  note: {
+                    type: 'string',
+                    description: 'Additional notes'
+                  },
+                  examples: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        sentence: {
+                          type: 'string',
+                          description: 'Example sentence'
+                        },
+                        translation: {
+                          type: 'string',
+                          description: 'Translation of the example'
+                        }
+                      }
+                    }
+                  },
+                  commonPhrases: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        phrase: {
+                          type: 'string',
+                          description: 'Common phrase'
+                        },
+                        meaning: {
+                          type: 'string',
+                          description: 'Meaning of the phrase'
+                        }
+                      }
+                    }
+                  }
+                }
               }
             },
             categories: {
               type: 'array',
               items: {
-                type: 'string'
-              },
-              description: 'Array of category names'
+                type: 'string',
+                description: 'Category name'
+              }
             }
           }
         }
@@ -328,7 +392,7 @@ const options = {
       }
     ]
   },
-  apis: ['./src/routes/**/*.ts', './src/controllers/**/*.ts']
+  apis: ['src/docs/swagger/*.ts']
 }
 
 const specs = swaggerJSDoc(options)

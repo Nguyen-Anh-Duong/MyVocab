@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose'
+import { Role } from '~/config/role.js'
 
 const UserSchema: Schema<IUser> = new Schema(
   {
@@ -16,7 +17,7 @@ const UserSchema: Schema<IUser> = new Schema(
     },
     role: {
       type: String,
-      enum: ['admin', 'user'],
+      enum: Role,
       default: 'user',
       required: true
     },

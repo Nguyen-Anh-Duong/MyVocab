@@ -1,8 +1,9 @@
 import { Types } from 'mongoose'
+import { Role } from '~/config/role.js'
 import { CreateCategoryDto, UpdateCategoryDto } from '~/dtos/category.dto.js'
 import { CategoryModel } from '~/models/category.model.js'
 import { VocabularyModel } from '~/models/vocabulary.model.js'
-import { BadRequestError, NotFoundError } from '~/utils/Errors.js'
+import { BadRequestError, ForbiddenError, NotFoundError } from '~/utils/Errors.js'
 
 class CategoryService {
   createCategory = async (categoryData: CreateCategoryDto, userId: string) => {
@@ -29,8 +30,12 @@ class CategoryService {
     return newCategory
   }
 
-  getCategories = async (userId: string) => {
-    const categories = await CategoryModel.find({ createdBy: userId }).lean()
+  getCategories = async (user: IUserRequest) => {
+    let queryFilter: Record<string, any> = {}
+    if (user.role === Role.USER) {
+      queryFilter.createdBy = user.userId // only get vocabularies created by the user
+    }
+    const categories = await CategoryModel.find(queryFilter).lean()
 
     return categories
   }
@@ -54,20 +59,20 @@ class CategoryService {
     return category
   }
 
-  updateCategory = async (categoryId: string, updateData: UpdateCategoryDto, userId: string) => {
-    const category = await CategoryModel.findOne({
-      _id: categoryId,
-      createdBy: userId
-    })
+  updateCategory = async (categoryId: string, updateData: UpdateCategoryDto, user: IUserRequest) => {
+    const category = await CategoryModel.findById(categoryId)
 
     if (!category) {
       throw new NotFoundError({ message: 'Category not found' })
+    }
+    if (user.role === Role.USER && category.createdBy.toString() !== user.userId) {
+      throw new ForbiddenError({ message: 'Not permission' })
     }
 
     // If updating name, check for duplicates
     if (updateData.name && updateData.name !== category.name) {
       const existingCategory = await CategoryModel.findOne({
-        createdBy: userId,
+        createdBy: category.createdBy,
         name: { $regex: new RegExp(`^${updateData.name}$`, 'i') },
         _id: { $ne: categoryId }
       })
@@ -86,27 +91,24 @@ class CategoryService {
     return category
   }
 
-  deleteCategory = async (categoryId: string, userId: string) => {
-    const category = await CategoryModel.findOne({
-      _id: categoryId,
-      createdBy: userId
-    })
+  deleteCategory = async (categoryId: string, user: IUserRequest) => {
+    const category = await CategoryModel.findById(categoryId)
 
     if (!category) {
       throw new NotFoundError({ message: 'Category not found' })
     }
+    if (user.role === Role.USER && category.createdBy.toString() !== user.userId) {
+      throw new ForbiddenError({ message: 'Not permission' })
+    }
 
     // delete category of vocabularies
-    await VocabularyModel.updateMany({ createdBy: userId }, { $pull: { categories: categoryId } })
+    await VocabularyModel.updateMany({ createdBy: category.createdBy }, { $pull: { categories: categoryId } })
 
-    await CategoryModel.findByIdAndDelete(categoryId)
+    await category.deleteOne()
   }
 
-  getVocabulariesByCategory = async (categoryId: string, userId: string, page = 1, limit = 10) => {
-    const category = await CategoryModel.findOne({
-      _id: categoryId,
-      createdBy: userId
-    })
+  getVocabulariesByCategory = async (categoryId: string, user: IUserRequest, page = 1, limit = 10) => {
+    const category = await CategoryModel.findById(categoryId)
 
     if (!category) {
       throw new NotFoundError({ message: 'Category not found' })
@@ -117,7 +119,7 @@ class CategoryService {
     const [vocabularies, total] = await Promise.all([
       VocabularyModel.find({
         categories: categoryId,
-        createdBy: userId
+        createdBy: category.createdBy
       })
         .populate({
           path: 'categories',
@@ -129,7 +131,7 @@ class CategoryService {
         .lean(),
       VocabularyModel.countDocuments({
         categories: categoryId,
-        createdBy: userId
+        createdBy: category.createdBy
       })
     ])
 
@@ -165,23 +167,21 @@ class CategoryService {
     return stats
   }
 
-  searchCategories = async (query: string, userId: string, page = 1, limit = 10) => {
+  searchCategories = async (query: string, user: IUserRequest, page = 1, limit = 10) => {
     const skip = (page - 1) * limit
 
     const regex = new RegExp(query, 'i')
+    let queryFilter: Record<string, any> = { name: { $regex: regex } }
+    if (user.role === Role.USER) {
+      queryFilter.createdBy = user.userId // only get categories created by the user
+    }
 
     const [categories, total] = await Promise.all([
-      CategoryModel.find({
-        createdBy: userId,
-        name: { $regex: regex }
-      })
+      CategoryModel.find(queryFilter)
         // .skip(skip)
         // .limit(limit)
         .lean(),
-      CategoryModel.countDocuments({
-        createdBy: userId,
-        name: { $regex: regex }
-      })
+      CategoryModel.countDocuments(queryFilter)
     ])
 
     return {
