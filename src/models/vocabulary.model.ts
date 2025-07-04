@@ -1,4 +1,5 @@
 import { Schema, model, Types } from 'mongoose'
+import { PartOfSpeech } from '~/constants/enum.js'
 
 const exampleSchema = new Schema({
   sentence: {
@@ -19,19 +20,7 @@ const meaningSchema = new Schema({
   context: String,
   partOfSpeech: {
     type: String,
-    enum: [
-      'noun',
-      'verb',
-      'adjective',
-      'adverb',
-      'pronoun',
-      'preposition',
-      'conjunction',
-      'interjection',
-      'determiner',
-      'exclamation',
-      'phrase'
-    ]
+    enum: PartOfSpeech
   },
   examples: [exampleSchema],
   commonPhrases: [phraseSchema],
