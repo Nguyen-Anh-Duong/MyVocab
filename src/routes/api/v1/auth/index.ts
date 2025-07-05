@@ -10,6 +10,7 @@ import {
 import { CreateUserDto, LoginUserDto } from '~/dtos/user.dto.js'
 import { authenticateAccessToken, authenticateRefreshToken } from '~/middlewares/authentication.js'
 import { validateDto } from '~/middlewares/validate.js'
+import googleRouter from './google/index.js'
 
 const authRouter = Router()
 const authController = new AuthController()
@@ -43,5 +44,7 @@ authRouter.post(
   authenticateAccessToken,
   authController.changePassword
 )
+
+authRouter.use('/google', googleRouter)
 
 export default authRouter

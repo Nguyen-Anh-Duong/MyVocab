@@ -6,7 +6,7 @@ import { toUserResponse } from '~/utils/user.utils.js'
 import { generateAccessToken, generateRefreshToken } from './token.service.js'
 import verifyTokenModel from '~/models/verifyToken.model.js'
 import { sendEmail } from '~/utils/email.js'
-import { APP_URL } from '~/config/index.js'
+import { APP_URL, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from '~/config/index.js'
 import redis from '~/database/redis.connect.js'
 import ResetPasswordTokenModel from '~/models/resetPasswordToken.model.js'
 
@@ -105,8 +105,14 @@ class AuthService {
     if (!user) {
       throw new BadRequestError({ message: 'User not exist.' })
     }
-    if (user.status !== 'active') {
+    if (user.status === 'pending') {
       throw new BadRequestError({ message: 'User not active. Please verify your email.' })
+    }
+    if (user.status === 'suspended') {
+      throw new BadRequestError({ message: 'User is suspended. Please contact support.' })
+    }
+    if (user.status === 'deactivated') {
+      throw new BadRequestError({ message: 'User is deactivated. Please contact support.' })
     }
     const compare = await comparePassword(password, user.passwordHash)
     if (!compare) {
@@ -211,6 +217,92 @@ class AuthService {
     }
     user.passwordHash = await hashPassword(newPassword)
     await user.save()
+  }
+
+  googleLogin = async (code: string) => {
+    // Exchange authorization code for access token
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        code: code as string,
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        redirect_uri: REDIRECT_URI,
+        grant_type: 'authorization_code'
+      })
+    })
+
+    const data = await response.json()
+    if (!response.ok) {
+      throw new BadRequestError({ message: 'Failed to exchange code for tokens' })
+    }
+
+    // Use access_token or id_token to fetch user profile
+    const { access_token, id_token } = data
+
+    const userProfileResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
+    })
+
+    const userProfile = await userProfileResponse.json()
+    if (!userProfileResponse.ok) {
+      throw new BadRequestError({ message: 'Failed to fetch user profile' })
+    }
+
+    //handle user authentication and retrieval using the profile data
+    const { email, name } = userProfile
+    const user = await UserModel.findOne({ email })
+
+    //if user existed, check status and generate tokens
+    if (user) {
+      switch (user.status) {
+        case 'suspended':
+          throw new BadRequestError({ message: 'User is suspended. Please contact support.' })
+        case 'deactivated':
+          throw new BadRequestError({ message: 'User is deactivated. Please contact support.' })
+        case 'pending':
+          user.status = 'active'
+          await user.save()
+      }
+      const accessToken = await generateAccessToken(user)
+      const { encoded, tokenId } = await generateRefreshToken(user)
+
+      //save refresh token to redis
+      const key = `refresh:${user._id}:${tokenId}`
+      await redis.set(key, tokenId, { EX: 60 * 60 * 24 }) // 1 day expiration
+
+      return {
+        account: toUserResponse(user),
+        token: { accessToken, refreshToken: encoded, familyToken: tokenId }
+      }
+    } else {
+      //if user not existed, create new user
+      const newUser = await UserModel.create({
+        email,
+        username: name || email.split('@')[0],
+        passwordHash: crypto.randomUUID(), // generate a random password
+        status: 'active',
+        role: 'user' // default role
+      })
+
+      const accessToken = await generateAccessToken(newUser)
+      const { encoded, tokenId } = await generateRefreshToken(newUser)
+
+      //save refresh token to redis
+      const key = `refresh:${newUser._id}:${tokenId}`
+      await redis.set(key, tokenId, { EX: 60 * 60 * 24 }) // 1 day expiration
+
+      return {
+        account: toUserResponse(newUser),
+        token: { accessToken, refreshToken: encoded, familyToken: tokenId }
+      }
+    }
   }
 }
 export default AuthService

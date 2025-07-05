@@ -115,7 +115,9 @@ class UserService {
       throw new NotFoundError({ message: 'User not found' })
     }
 
-    await user.deleteOne()
+    user.status = 'deactivated' // Soft delete by changing status
+    await user.save()
+
     return { message: 'User deleted successfully' }
   }
 }

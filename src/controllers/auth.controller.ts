@@ -97,6 +97,20 @@ class AuthController {
     const data = await this.authService.changePassword(userId, oldPassword, newPassword)
     res.status(200).json({ message: 'Change password success.', data })
   })
+
+  googleLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { code } = req.query
+
+    const data = await this.authService.googleLogin(code as string)
+    res
+      .status(200)
+      .cookie('familyToken', data.token.familyToken, cookieOptions)
+      .cookie('refreshToken', data.token.refreshToken, cookieOptions)
+      .json({
+        message: 'Google login success.',
+        data: { account: data.account, token: { accessToken: data.token.accessToken } }
+      })
+  })
 }
 
 export default AuthController
