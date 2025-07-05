@@ -170,6 +170,62 @@
 
 /**
  * @swagger
+ * /api/v1/auth/resend-verification:
+ *   post:
+ *     summary: Resend email verification
+ *     tags: [Authentication]
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User's email address
+ *                 example: "user@example.com"
+ *     responses:
+ *       200:
+ *         description: Verification email resent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Verification email resent successfully. Please check your email."
+ *       400:
+ *         description: Bad request - User not found or already verified
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             examples:
+ *               userNotFound:
+ *                 summary: User not found
+ *                 value:
+ *                   message: "User not exist."
+ *                   status: 400
+ *               userAlreadyVerified:
+ *                 summary: User already verified
+ *                 value:
+ *                   message: "User already verified."
+ *                   status: 400
+ *               validationError:
+ *                 summary: Invalid email format
+ *                 value:
+ *                   message: "Invalid email format"
+ *                   status: 400
+ */
+
+/**
+ * @swagger
  * /api/v1/auth/refresh-token:
  *   post:
  *     summary: Refresh access token

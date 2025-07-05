@@ -10,7 +10,9 @@ export class VerifyEmailDto {
   @IsNotEmpty()
   token!: string
 }
+
 export class ResendVerificationEmailDto {
+  @IsEmail()
   @IsNotEmpty()
   email!: string
 }

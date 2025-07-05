@@ -14,17 +14,23 @@ const cookieOptions: CookieOptions = {
 class AuthController {
   private authService = new AuthService()
 
-  register = async (req: Request, res: Response, next: NextFunction) => {
+  register = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userData = req.body
     await this.authService.register(userData)
     res.status(201).json({ message: 'Register successfully. Please verify your email.' })
-  }
+  })
 
-  verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+  verifyEmail = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { token } = req.query
     const data = await this.authService.verifyEmail(token as string)
     res.status(200).json({ message: 'Verify email success.', data })
-  }
+  })
+
+  resendVerificationEmail = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body
+    await this.authService.resendVerificationEmail(email)
+    res.status(200).json({ message: 'Verification email resent successfully. Please check your email.' })
+  })
 
   login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userData = req.body

@@ -65,6 +65,40 @@ class AuthService {
     return toUserResponse(user)
   }
 
+  resendVerificationEmail = async (email: string): Promise<void> => {
+    const user = await UserModel.findOne({ email })
+    if (!user) {
+      throw new BadRequestError({ message: 'User not exist.' })
+    }
+
+    if (user.status !== 'pending') {
+      throw new BadRequestError({ message: 'User already verified.' })
+    }
+
+    // Delete existing verification token
+    await verifyTokenModel.deleteMany({ userId: user._id })
+
+    // Create new verification token
+    const verifyToken = await verifyTokenModel.create({ userId: user._id, token: crypto.randomUUID() })
+
+    // Send verification email
+    await sendEmail({
+      to: email,
+      subject: 'Verify your email',
+      html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h2>Verify Your Email</h2>
+        <p>You requested to resend the verification email. Please verify your email by clicking the link below:</p>
+        <a href="${APP_URL}/verify-email?token=${verifyToken.token}" style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #007BFF; text-decoration: none; border-radius: 5px;">Verify Email</a>
+        <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
+        <p>${APP_URL}/verify-email?token=${verifyToken.token}</p>
+        <p>This link will expire in 1 hour.</p>
+        <p>Thank you!</p>
+      </div>
+      `
+    })
+  }
+
   login = async (userData: LoginUserDto) => {
     const { email, password } = userData
     const user = await UserModel.findOne({ email })

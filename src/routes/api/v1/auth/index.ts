@@ -1,6 +1,12 @@
 import { Router } from 'express'
 import AuthController from '~/controllers/auth.controller.js'
-import { ChangePasswordDto, ForgotPasswordDto, ResetPasswordDto, TokenDto } from '~/dtos/auth.dto.js'
+import {
+  ChangePasswordDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
+  TokenDto,
+  ResendVerificationEmailDto
+} from '~/dtos/auth.dto.js'
 import { CreateUserDto, LoginUserDto } from '~/dtos/user.dto.js'
 import { authenticateAccessToken, authenticateRefreshToken } from '~/middlewares/authentication.js'
 import { validateDto } from '~/middlewares/validate.js'
@@ -14,7 +20,7 @@ authRouter.post('/login', validateDto(LoginUserDto), authController.login)
 
 authRouter.get('/verify-email', validateDto(TokenDto, 'query'), authController.verifyEmail)
 
-// authRouter.get('/resend-verification')
+authRouter.post('/resend-verification', validateDto(ResendVerificationEmailDto), authController.resendVerificationEmail)
 
 authRouter.post('/refresh-token', authenticateRefreshToken, authController.refreshToken)
 
