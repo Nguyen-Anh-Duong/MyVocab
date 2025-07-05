@@ -127,20 +127,20 @@ class AuthService {
     }
     const resetPasswordToken = await ResetPasswordTokenModel.create({ userId: user._id, token: crypto.randomUUID() })
 
-    //   await sendEmail({
-    //     to: email,
-    //     subject: 'Reset password',
-    //     html: `
-    //   <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-    //   <h2>Reset Your Password</h2>
-    //   <p>We received a request to reset your password. Click the button below to set a new password:</p>
-    //   <a href="${APP_URL}/reset-password?token=${resetPasswordToken.token}" style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #28a745; text-decoration: none; border-radius: 5px;">Reset Password</a>
-    //   <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
-    //   <p>${APP_URL}/reset-password?token=${resetPasswordToken.token}</p>
-    //   <p>If you did not request a password reset, please ignore this email.</p>
-    //   <p>Thank you!</p>
-    // </div>`
-    //   })
+    await sendEmail({
+      to: email,
+      subject: 'Reset password',
+      html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+      <h2>Reset Your Password</h2>
+      <p>We received a request to reset your password. Click the button below to set a new password:</p>
+      <a href="${APP_URL}/reset-password?token=${resetPasswordToken.token}" style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #28a745; text-decoration: none; border-radius: 5px;">Reset Password</a>
+      <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
+      <p>${APP_URL}/reset-password?token=${resetPasswordToken.token}</p>
+      <p>If you did not request a password reset, please ignore this email.</p>
+      <p>Thank you!</p>
+    </div>`
+    })
   }
 
   resetPassword = async (token: string, newPassword: string) => {
