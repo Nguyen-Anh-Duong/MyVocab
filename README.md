@@ -114,32 +114,77 @@ For a quick start, see our detailed setup guide: **[docs/SETUP.md](docs/SETUP.md
 
 ## 🔧 Environment Variables
 
-We provide a comprehensive `.env.example` file with all necessary environment variables.
+Create a `.env` file in the root directory by copying from `.env.example`:
 
-### Required Variables
-
-```env
-# JWT Secrets (MUST CHANGE in production)
-ACCESS_TOKEN_SECRET_KEY=your-super-secret-access-token-key
-REFRESH_TOKEN_SECRET_KEY=your-super-secret-refresh-token-key
-
-# Email Service
-RESEND_API_KEY=your-resend-api-key
-
-# Database
-MONGO_URI=mongodb://localhost:27017/myvocab
-REDIS_URL=redis://localhost:6379
+```bash
+cp .env.example .env
 ```
 
-### Full Configuration
+Then configure the following variables:
 
-For a complete list of all available environment variables, see [`.env.example`](.env.example).
+### Server Configuration
 
-**Important Notes:**
+```env
+PORT=3000                    # Port for the application (default: 3000)
+NODE_ENV=development         # Environment: development, production, test
+APP_URL=http://localhost:3000 # Base URL of your application
+```
 
-- Always change JWT secrets in production
-- Get a free Resend API key from [resend.com](https://resend.com)
-- Never commit your actual `.env` file to version control
+### Database Configuration
+
+```env
+# MongoDB Configuration
+MONGO_URL=mongodb://localhost:27017/myvocab  # MongoDB connection string
+MONGO_INITDB_ROOT_USERNAME=                  # MongoDB root username (optional for local)
+MONGO_INITDB_ROOT_PASSWORD=                  # MongoDB root password (optional for local)
+MONGO_DB_NAME=myvocab                        # Database name
+
+# Redis Configuration
+REDIS_URL=redis://localhost:6379             # Redis connection string
+```
+
+### Security & Authentication
+
+```env
+# Password Hashing
+SALT_LENGTH=16               # Length of salt for password hashing (bytes)
+KEY_LENGTH=64                # Length of hash for password hashing (bytes)
+
+# JWT Tokens (MUST CHANGE in production)
+ACCESS_TOKEN_SECRET_KEY=your_jwt_secret_change_this_in_production
+REFRESH_TOKEN_SECRET_KEY=refresh_secret_key_change_this_in_production
+```
+
+### External Services
+
+```env
+# Email Service (Get free API key from resend.com)
+RESEND_API_KEY=your_resend_api_key_here
+
+# Google Gemini AI (Get API key from ai.google.dev)
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Google OAuth (Get from Google Cloud Console)
+CLIENT_ID=your_google_oauth_client_id
+CLIENT_SECRET=your_google_oauth_client_secret
+REDIRECT_URI=http://localhost:3000/api/v1/auth/google/callback
+```
+
+### Important Notes
+
+⚠️ **Security Warnings:**
+
+- **NEVER** commit your actual `.env` file to version control
+- **ALWAYS** change JWT secrets in production (use long, random strings)
+- Keep your API keys secure and never expose them publicly
+
+📝 **Setup Instructions:**
+
+1. **MongoDB**: Install locally or use MongoDB Atlas (cloud)
+2. **Redis**: Install locally or use Redis Cloud
+3. **Resend API**: Sign up at [resend.com](https://resend.com) for email functionality
+4. **Gemini API**: Get API key from [ai.google.dev](https://ai.google.dev) for AI features
+5. **Google OAuth**: Set up in [Google Cloud Console](https://console.cloud.google.com) for Google login
 
 ## 🏃‍♂️ Running the Application
 

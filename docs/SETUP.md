@@ -34,19 +34,54 @@ nano .env  # or use your preferred editor
 
 ### 3. Required Environment Variables
 
-Open `.env` and update these **mandatory** values:
+Open `.env` and update these values. **Mandatory** fields are marked with ⚠️:
+
+#### Server Configuration
 
 ```env
-# JWT Secrets - MUST CHANGE in production
-ACCESS_TOKEN_SECRET_KEY=your-super-secret-access-token-key-HERE
-REFRESH_TOKEN_SECRET_KEY=your-super-secret-refresh-token-key-HERE
+PORT=3000                    # Application port
+NODE_ENV=development         # Environment: development, production, test
+APP_URL=http://localhost:3000 # Base URL of your application
+```
 
-# Email Service (for user verification)
-RESEND_API_KEY=your-resend-api-key-HERE
+#### Database Configuration
 
-# Database (update if using different ports/hosts)
-MONGO_URI=mongodb://localhost:27017/myvocab
-REDIS_URL=redis://localhost:6379
+```env
+# MongoDB
+MONGO_URL=mongodb://localhost:27017/myvocab  # ⚠️ MongoDB connection string
+MONGO_INITDB_ROOT_USERNAME=                  # Optional for local development
+MONGO_INITDB_ROOT_PASSWORD=                  # Optional for local development
+MONGO_DB_NAME=myvocab                        # Database name
+
+# Redis
+REDIS_URL=redis://localhost:6379             # ⚠️ Redis connection string
+```
+
+#### Security & Authentication
+
+```env
+# Password Hashing
+SALT_LENGTH=16               # Salt length for password hashing
+KEY_LENGTH=64                # Hash length for password hashing
+
+# JWT Secrets - ⚠️ MUST CHANGE in production
+ACCESS_TOKEN_SECRET_KEY=your_jwt_secret_change_this_in_production
+REFRESH_TOKEN_SECRET_KEY=refresh_secret_key_change_this_in_production
+```
+
+#### External Services (API Keys Required)
+
+```env
+# Email Service - ⚠️ Required for user verification
+RESEND_API_KEY=your_resend_api_key_here
+
+# Google Gemini AI - ⚠️ Required for AI features
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Google OAuth - Required for Google login
+CLIENT_ID=your_google_oauth_client_id
+CLIENT_SECRET=your_google_oauth_client_secret
+REDIRECT_URI=http://localhost:3000/api/v1/auth/google/callback
 ```
 
 ### 4. Database Setup
@@ -63,13 +98,35 @@ sudo systemctl start redis
 docker run -d -p 6379:6379 --name redis redis:latest
 ```
 
-### 5. Get Resend API Key
+### 5. Get Required API Keys
+
+#### 5.1 Resend API Key (Email Service)
 
 1. Go to [resend.com](https://resend.com)
 2. Sign up for a free account
 3. Navigate to API Keys section
 4. Create a new API key
 5. Copy the key to your `.env` file
+
+#### 5.2 Google Gemini AI API Key
+
+1. Go to [ai.google.dev](https://ai.google.dev)
+2. Sign in with your Google account
+3. Click "Get API key" button
+4. Create a new API key for your project
+5. Copy the key to your `.env` file
+
+#### 5.3 Google OAuth Setup (Optional - for Google login)
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Create a new project or select existing one
+3. Enable the Google+ API
+4. Go to "Credentials" → "Create Credentials" → "OAuth 2.0 Client IDs"
+5. Set application type to "Web application"
+6. Add authorized redirect URIs:
+   - `http://localhost:3000/api/v1/auth/google/callback` (development)
+   - `https://yourdomain.com/api/v1/auth/google/callback` (production)
+7. Copy Client ID and Client Secret to your `.env` file
 
 ### 6. Run the Application
 
@@ -235,6 +292,12 @@ kill -9 <PID>
 - Test Redis connection: `redis-cli ping`
 - Should return "PONG"
 
+**API Keys Issues**
+
+- **Gemini API**: Verify API key is active and has quota remaining
+- **Resend API**: Check domain verification and sending limits
+- **Google OAuth**: Ensure redirect URIs are correctly configured
+
 ## 📚 Next Steps
 
 1. **Read the full documentation**: [README.md](../README.md)
@@ -249,6 +312,7 @@ kill -9 <PID>
 - Enable auto-save in your editor for faster development
 - Use Git hooks for code quality (ESLint, Prettier)
 - Monitor logs in development: `npm run dev | tee app.log`
+- Keep your API keys secure and never commit them to version control
 
 ## 🆘 Need Help?
 
