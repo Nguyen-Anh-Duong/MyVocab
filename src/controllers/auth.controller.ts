@@ -71,6 +71,26 @@ class AuthController {
       .status(200)
       .json({ message: 'Logout all success.' })
   })
+
+  forgotPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body
+    await this.authService.forgotPassword(email)
+    res.status(200).json({ message: 'Forgot password success. Please check your email' })
+  })
+
+  resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { token } = req.query
+    const { password } = req.body
+    await this.authService.resetPassword(token as string, password)
+    res.status(200).json({ message: 'Reset password success. You can login now.' })
+  })
+
+  changePassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user!.userId as string
+    const { oldPassword, newPassword } = req.body
+    const data = await this.authService.changePassword(userId, oldPassword, newPassword)
+    res.status(200).json({ message: 'Change password success.', data })
+  })
 }
 
 export default AuthController
