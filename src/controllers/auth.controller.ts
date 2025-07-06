@@ -103,13 +103,9 @@ class AuthController {
 
     const data = await this.authService.googleLogin(code as string)
     res
-      .status(200)
       .cookie('familyToken', data.token.familyToken, cookieOptions)
       .cookie('refreshToken', data.token.refreshToken, cookieOptions)
-      .json({
-        message: 'Google login success.',
-        data: { account: data.account, token: { accessToken: data.token.accessToken } }
-      })
+      .redirect(`http://localhost:5173/oauth-success?accessToken=${data.token.accessToken}`)
   })
 }
 
