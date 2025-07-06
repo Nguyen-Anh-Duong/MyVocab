@@ -320,4 +320,242 @@
  *               $ref: '#/components/schemas/Error'
  */
 
+/**
+ * @swagger
+ * /api/v1/auth/forgot-password:
+ *   post:
+ *     summary: Request password reset
+ *     tags: [Authentication]
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User's email address
+ *                 example: "user@example.com"
+ *     responses:
+ *       200:
+ *         description: Password reset email sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Forgot password success. Please check your email"
+ *       400:
+ *         description: Bad request - User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             examples:
+ *               userNotFound:
+ *                 summary: User not found
+ *                 value:
+ *                   message: "User not exist."
+ *                   status: 400
+ */
+
+/**
+ * @swagger
+ * /api/v1/auth/reset-password:
+ *   post:
+ *     summary: Reset password with token
+ *     tags: [Authentication]
+ *     security: []
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Password reset token
+ *         example: "12345678-1234-1234-1234-123456789abc"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - password
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *                 description: New password
+ *                 example: "newpassword123"
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Reset password success. You can login now."
+ *       400:
+ *         description: Invalid or expired token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             examples:
+ *               invalidToken:
+ *                 summary: Invalid or expired token
+ *                 value:
+ *                   message: "Invalid or expired token."
+ *                   status: 400
+ */
+
+/**
+ * @swagger
+ * /api/v1/auth/change-password:
+ *   post:
+ *     summary: Change password for authenticated user
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 description: Current password
+ *                 example: "oldpassword123"
+ *               newPassword:
+ *                 type: string
+ *                 minLength: 6
+ *                 description: New password
+ *                 example: "newpassword123"
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Change password success."
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Invalid old password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             examples:
+ *               invalidPassword:
+ *                 summary: Invalid old password
+ *                 value:
+ *                   message: "Invalid old password."
+ *                   status: 400
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+
+/**
+ * @swagger
+ * /api/v1/auth/google:
+ *   get:
+ *     summary: Get Google OAuth authorization URL
+ *     tags: [Authentication]
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: Google OAuth URL returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 url:
+ *                   type: string
+ *                   description: Google OAuth authorization URL
+ *                   example: "https://accounts.google.com/o/oauth2/v2/auth?client_id=..."
+ */
+
+/**
+ * @swagger
+ * /api/v1/auth/google/callback:
+ *   get:
+ *     summary: Handle Google OAuth callback
+ *     tags: [Authentication]
+ *     security: []
+ *     parameters:
+ *       - in: query
+ *         name: code
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Authorization code from Google
+ *         example: "4/0AWtgzh7..."
+ *     responses:
+ *       200:
+ *         description: Google login successful
+ *         headers:
+ *           Set-Cookie:
+ *             schema:
+ *               type: string
+ *               example: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; HttpOnly; Secure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Google login success."
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     account:
+ *                       $ref: '#/components/schemas/User'
+ *                     token:
+ *                       type: object
+ *                       properties:
+ *                         accessToken:
+ *                           type: string
+ *                           description: JWT access token
+ *                           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *       400:
+ *         description: Invalid authorization code
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             examples:
+ *               invalidCode:
+ *                 summary: Invalid authorization code
+ *                 value:
+ *                   message: "Invalid authorization code."
+ *                   status: 400
+ */
+
 export default {}

@@ -5,5 +5,6 @@ import './auth.swagger.ts'
 import './vocabularies.swagger.ts'
 import './categories.swagger.ts'
 import './users.swagger.ts'
+import './nlp.swagger.ts'
 
 export default {}

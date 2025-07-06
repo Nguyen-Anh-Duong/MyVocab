@@ -246,32 +246,51 @@ Authorization: Bearer <your-access-token>
 - `POST /auth/register` - Register new user
 - `POST /auth/login` - User login
 - `GET /auth/verify-email` - Verify email address
+- `POST /auth/resend-verification` - Resend verification email
 - `POST /auth/refresh-token` - Refresh access token
 - `POST /auth/logout` - Logout from current device
 - `POST /auth/logout-all` - Logout from all devices
+- `POST /auth/forgot-password` - Request password reset
+- `POST /auth/reset-password` - Reset password with token
+- `POST /auth/change-password` - Change password for authenticated user
+
+#### Google OAuth
+
+- `GET /auth/google` - Get Google OAuth authorization URL
+- `GET /auth/google/callback` - Handle Google OAuth callback
 
 #### Users
 
 - `GET /users/me` - Get current user profile
+- `GET /users` - Get all users (Admin only)
+- `GET /users/{userId}` - Get user by ID (Admin only)
+- `PATCH /users/{userId}` - Update user (Admin only)
+- `PATCH /users/{userId}/status` - Update user status (Admin only)
+- `DELETE /users/{userId}` - Delete user (Admin only)
 
 #### Vocabularies
 
 - `GET /vocabularies` - Get all user vocabularies
 - `POST /vocabularies` - Create new vocabulary
-- `GET /vocabularies/:id` - Get vocabulary by ID
-- `PATCH /vocabularies/:id` - Update vocabulary
-- `DELETE /vocabularies/:id` - Delete vocabulary
+- `GET /vocabularies/{id}` - Get vocabulary by ID
+- `PATCH /vocabularies/{id}` - Update vocabulary
+- `DELETE /vocabularies/{id}` - Delete vocabulary
 - `GET /vocabularies/search` - Search vocabularies
 
 #### Categories
 
 - `GET /categories` - Get all user categories
 - `POST /categories` - Create new category
-- `PATCH /categories/:id` - Update category
-- `DELETE /categories/:id` - Delete category
+- `GET /categories/{id}` - Get category by ID
+- `PATCH /categories/{id}` - Update category
+- `DELETE /categories/{id}` - Delete category
 - `GET /categories/stats` - Get category statistics
-- `GET /categories/:id/vocabularies` - Get vocabularies by category
+- `GET /categories/{id}/vocabularies` - Get vocabularies by category
 - `GET /categories/search` - Search categories
+
+#### NLP & AI Features
+
+- `POST /nlp/text-to-vocabulary` - Parse text to extract vocabulary using AI (Google Gemini)
 
 ## 📁 Project Structure
 

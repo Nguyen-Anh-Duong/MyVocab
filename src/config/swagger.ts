@@ -36,6 +36,84 @@ const options = {
           name: 'refreshToken'
         }
       },
+      responses: {
+        Unauthorized: {
+          description: 'Unauthorized - Authentication required',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/Error'
+              },
+              examples: {
+                unauthorized: {
+                  summary: 'Missing or invalid token',
+                  value: {
+                    message: 'Access token is required',
+                    status: 401
+                  }
+                }
+              }
+            }
+          }
+        },
+        Forbidden: {
+          description: 'Forbidden - Insufficient permissions',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/Error'
+              },
+              examples: {
+                forbidden: {
+                  summary: 'Insufficient permissions',
+                  value: {
+                    message: 'Access denied. Admin role required.',
+                    status: 403
+                  }
+                }
+              }
+            }
+          }
+        },
+        NotFound: {
+          description: 'Resource not found',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/Error'
+              },
+              examples: {
+                notFound: {
+                  summary: 'Resource not found',
+                  value: {
+                    message: 'Resource not found',
+                    status: 404
+                  }
+                }
+              }
+            }
+          }
+        },
+        BadRequest: {
+          description: 'Bad request - Validation error',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/Error'
+              },
+              examples: {
+                validationError: {
+                  summary: 'Validation error',
+                  value: {
+                    message: 'Validation failed',
+                    status: 400
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       schemas: {
         Error: {
           type: 'object',
@@ -381,6 +459,54 @@ const options = {
                 type: 'string',
                 description: 'Category name'
               }
+            }
+          }
+        },
+        NlpTextInputDto: {
+          type: 'object',
+          required: ['text'],
+          properties: {
+            text: {
+              type: 'string',
+              minLength: 1,
+              description: 'Text to analyze for vocabulary extraction'
+            }
+          }
+        },
+        ForgotPasswordDto: {
+          type: 'object',
+          required: ['email'],
+          properties: {
+            email: {
+              type: 'string',
+              format: 'email',
+              description: 'User email address'
+            }
+          }
+        },
+        ResetPasswordDto: {
+          type: 'object',
+          required: ['password'],
+          properties: {
+            password: {
+              type: 'string',
+              minLength: 6,
+              description: 'New password'
+            }
+          }
+        },
+        ChangePasswordDto: {
+          type: 'object',
+          required: ['oldPassword', 'newPassword'],
+          properties: {
+            oldPassword: {
+              type: 'string',
+              description: 'Current password'
+            },
+            newPassword: {
+              type: 'string',
+              minLength: 6,
+              description: 'New password'
             }
           }
         }
