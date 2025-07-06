@@ -20,7 +20,7 @@ class CategoryController {
   getOneCategory = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as IUserRequest
     const { categoryId } = req.params
-    const data = await categoryService.getOneCategory(categoryId, user.userId)
+    const data = await categoryService.getOneCategory(categoryId, user)
     res.status(200).json({ message: 'Get category successfully', data })
   })
 

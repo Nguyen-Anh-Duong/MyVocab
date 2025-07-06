@@ -59,4 +59,12 @@ categoryRouter.delete(
 
 categoryRouter.get('/', authenticateAccessToken, authorize([Role.ADMIN, Role.USER]), categoryController.getCategories)
 
+categoryRouter.get(
+  '/:categoryId',
+  validateDto(CategoryIdDto, 'params'),
+  authenticateAccessToken,
+  authorize([Role.ADMIN, Role.USER]),
+  categoryController.getOneCategory
+)
+
 export default categoryRouter

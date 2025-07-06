@@ -41,19 +41,20 @@ class CategoryService {
   }
 
   // co the bo di
-  getOneCategory = async (categoryId: string, userId: string) => {
-    const category = await CategoryModel.findOne({
-      _id: categoryId,
-      createdBy: userId
-    })
-      .populate({
-        path: 'vocabularies',
-        select: 'word phonetic meanings createdAt'
-      })
-      .lean()
+  getOneCategory = async (categoryId: string, user: IUserRequest) => {
+    const category = await CategoryModel.findById(categoryId).lean()
+    // .populate({
+    //   path: 'vocabularies',
+    //   select: 'word phonetic meanings createdAt'
+    // })
+    // .lean()
 
     if (!category) {
       throw new NotFoundError({ message: 'Category not found' })
+    }
+
+    if (user.role === Role.USER && category.createdBy.toString() !== user.userId) {
+      throw new ForbiddenError({ message: 'Not permission' })
     }
 
     return category
