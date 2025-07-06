@@ -22,8 +22,8 @@ declare global {
     role: UserRole
     status: UserStatus
     suspensionReason?: string
-    createAt: Date
-    updateAt: Date
+    createdAt: Date
+    updatedAt: Date
   }
 
   interface IUserResponse {
@@ -33,6 +33,8 @@ declare global {
     role: UserRole
     status: UserStatus
     suspensionReason?: string
+    createdAt: Date
+    updatedAt: Date
   }
 
   interface CustomErrorContent {
