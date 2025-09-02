@@ -6,7 +6,7 @@ import { toUserResponse } from '~/utils/user.utils.js'
 import { generateAccessToken, generateRefreshToken } from './token.service.js'
 import verifyTokenModel from '~/models/verifyToken.model.js'
 import { sendEmail } from '~/utils/email.js'
-import { APP_URL, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from '~/config/index.js'
+import { CLIENT_ID, CLIENT_SECRET, FRONTEND_URL, REDIRECT_URI } from '~/config/index.js'
 import redis from '~/database/redis.connect.js'
 import ResetPasswordTokenModel from '~/models/resetPasswordToken.model.js'
 
@@ -33,9 +33,9 @@ class AuthService {
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <h2>Verify Your Email</h2>
         <p>Thank you for registering. Please verify your email by clicking the link below:</p>
-        <a href="${APP_URL}/verify-email?token=${verifyToken.token}" style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #007BFF; text-decoration: none; border-radius: 5px;">Verify Email</a>
+        <a href="${FRONTEND_URL}/verify-email?token=${verifyToken.token}" style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #007BFF; text-decoration: none; border-radius: 5px;">Verify Email</a>
         <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
-        <p>${APP_URL}/verify-email?token=${verifyToken.token}</p>
+        <p>${FRONTEND_URL}/verify-email?token=${verifyToken.token}</p>
         <p>Thank you!</p>
       </div>
       `
@@ -89,9 +89,9 @@ class AuthService {
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <h2>Verify Your Email</h2>
         <p>You requested to resend the verification email. Please verify your email by clicking the link below:</p>
-        <a href="${APP_URL}/verify-email?token=${verifyToken.token}" style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #007BFF; text-decoration: none; border-radius: 5px;">Verify Email</a>
+        <a href="${FRONTEND_URL}/verify-email?token=${verifyToken.token}" style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #007BFF; text-decoration: none; border-radius: 5px;">Verify Email</a>
         <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
-        <p>${APP_URL}/verify-email?token=${verifyToken.token}</p>
+        <p>${FRONTEND_URL}/verify-email?token=${verifyToken.token}</p>
         <p>This link will expire in 1 hour.</p>
         <p>Thank you!</p>
       </div>
@@ -174,9 +174,9 @@ class AuthService {
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
       <h2>Reset Your Password</h2>
       <p>We received a request to reset your password. Click the button below to set a new password:</p>
-      <a href="${APP_URL}/reset-password?token=${resetPasswordToken.token}" style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #28a745; text-decoration: none; border-radius: 5px;">Reset Password</a>
+      <a href="${FRONTEND_URL}/reset-password?token=${resetPasswordToken.token}" style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #28a745; text-decoration: none; border-radius: 5px;">Reset Password</a>
       <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
-      <p>${APP_URL}/reset-password?token=${resetPasswordToken.token}</p>
+      <p>${FRONTEND_URL}/reset-password?token=${resetPasswordToken.token}</p>
       <p>If you did not request a password reset, please ignore this email.</p>
       <p>Thank you!</p>
     </div>`

@@ -4,6 +4,7 @@ const PORT = process.env.PORT!
 
 const NODE_ENV = process.env.NODE_ENV!
 const APP_URL = process.env.APP_URL!
+const FRONTEND_URL = process.env.FRONTEND_URL!
 
 const MONGO_URL = process.env.MONGO_URL!
 const MONGO_DB_NAME = process.env.MONGO_DB_NAME!
@@ -27,6 +28,8 @@ const REDIRECT_URI = process.env.REDIRECT_URI!
 export {
   PORT,
   NODE_ENV,
+  APP_URL,
+  FRONTEND_URL,
   MONGO_URL,
   MONGO_DB_NAME,
   SALT_LENGTH,
@@ -36,7 +39,6 @@ export {
   ACCESS_TOKEN_SECRET_KEY,
   REFRESH_TOKEN_SECRET_KEY,
   RESEND_API_KEY,
-  APP_URL,
   REDIS_URL,
   CLIENT_ID,
   CLIENT_SECRET,

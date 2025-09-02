@@ -7,7 +7,7 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import { errorHandler } from './middlewares/errorHandler.js'
-import { NODE_ENV } from './config/index.js'
+import { FRONTEND_URL, NODE_ENV } from './config/index.js'
 import { specs, swaggerUi } from './config/swagger.js'
 
 // Import swagger documentation files to ensure they are loaded
@@ -26,10 +26,7 @@ app.use(
 
 app.use(
   cors({
-    origin: [
-      'http://localhost:5173', // Vite default dev server port
-      'http://localhost:5174' // Alternative Vite port
-    ],
+    origin: [FRONTEND_URL],
     credentials: true, // Allow cookies to be sent
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
